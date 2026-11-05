@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { dbFromRows, diffDB, isEmptyDiff, mergeDB, type Rows } from "./sync";
+import {
+  dbFromRows,
+  diffDB,
+  fetchAllRows,
+  isEmptyDiff,
+  mergeDB,
+  type Rows,
+} from "./sync";
 import {
   withActivity,
   withAttempt,
@@ -151,5 +158,49 @@ describe("mergeDB", () => {
     const up = diffDB(cloud, m);
     expect(up.attempts).toHaveLength(1);
     expect(up.students.map((s) => s.id)).toEqual(["kabir"]);
+  });
+});
+
+describe("fetchAllRows", () => {
+  it("keeps reading pages until one comes back empty", async () => {
+    const table = Array.from({ length: 2350 }, (_, i) => i);
+    const calls: [number, number][] = [];
+    // Simulate a server that caps every response at 1,000 rows.
+    const rows = await fetchAllRows(async (from: number, to: number) => {
+      calls.push([from, to]);
+      return {
+        data: table.slice(from, Math.min(to + 1, from + 1000)),
+        error: null,
+      };
+    });
+    expect(rows).toEqual(table);
+    expect(calls[0]).toEqual([0, 999]);
+  });
+  it("works when the server's cap is smaller than the page size", async () => {
+    const table = Array.from({ length: 1200 }, (_, i) => i);
+    const rows = await fetchAllRows(async (from: number) => ({
+      data: table.slice(from, from + 500),
+      error: null,
+    }));
+    expect(rows).toHaveLength(1200);
+  });
+  it("stops on an error", async () => {
+    await expect(
+      fetchAllRows(async () => ({ data: null, error: new Error("boom") })),
+    ).rejects.toThrow("boom");
+  });
+});
+
+describe("mergeDB and demo students", () => {
+  it("does not bring back a demo class a teacher removed", () => {
+    const local = withStudent(
+      withStudent(empty(), "Real one"),
+      "Aarav (demo)",
+      true,
+    );
+    const cloud = withStudent(empty(), "Real one");
+    const m = mergeDB(cloud, local);
+    expect(Object.keys(m.students)).toEqual(["real-one"]);
+    expect(diffDB(cloud, m).students).toHaveLength(0);
   });
 });

@@ -10,6 +10,9 @@
 --     public.teacher_emails — a table only the project owner can edit (Table Editor / SQL).
 --   • Students read and write only their own rows. Teachers read everyone's progress,
 --     create assignments, and add or remove the demo class.
+--   • Keep "Confirm email" ON (Authentication → Sign In / Providers → Email). Teacher rights are
+--     tied to an email address, and only a confirmed address proves the person owns it. With
+--     confirmation off, anyone could sign up with a listed teacher's email and see every student.
 
 -- ---------- Progress tables ----------
 
@@ -68,9 +71,16 @@ create table if not exists public.profiles (
 
 -- True when the signed-in user is a teacher. SECURITY DEFINER so policies can call it without
 -- needing read access to every profile.
+-- The account's email must also be confirmed. This only protects you while "Confirm email" is
+-- on: with it off, Supabase marks every new address as confirmed automatically.
 create or replace function public.is_teacher()
 returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.profiles where id = auth.uid() and role = 'teacher');
+  select exists (
+    select 1
+    from public.profiles p
+    join auth.users u on u.id = p.id
+    where p.id = auth.uid() and p.role = 'teacher' and u.email_confirmed_at is not null
+  );
 $$;
 
 -- Creates the profile (and, for students, the progress row) when someone signs up.
@@ -152,7 +162,7 @@ create policy "own or teacher reads profiles" on public.profiles for select to a
 create policy "own or teacher reads students" on public.students for select to authenticated
   using (id = auth.uid()::text or public.is_teacher());
 create policy "add own or demo student" on public.students for insert to authenticated
-  with check (id = auth.uid()::text or (demo and public.is_teacher()));
+  with check ((id = auth.uid()::text and not demo) or (demo and public.is_teacher()));
 create policy "teacher removes demo students" on public.students for delete to authenticated
   using (demo and public.is_teacher());
 

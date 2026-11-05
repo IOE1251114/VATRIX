@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
 import { CircleHelp, Unlink } from "lucide-react";
 import { biconnected } from "../../../domain/daa/unit3/algos";
-import { adjacency, presets, type Graph } from "../../../domain/daa/unit3/graphs";
+import {
+  adjacency,
+  presets,
+  type Graph,
+} from "../../../domain/daa/unit3/graphs";
 import { Legend, PlayerBar, usePlayer } from "../unit1/shared";
 import { DSPanel, ECOL, GraphView, VCOL, groupColor } from "./GraphView";
 

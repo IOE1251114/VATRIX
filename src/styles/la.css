@@ -50,7 +50,9 @@
   max-width: 100%;
 }
 .la-matrix-label {
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   letter-spacing: 0.4px;
   color: #8fa3b9;
 }
@@ -66,7 +68,9 @@
   border-collapse: collapse;
 }
 .la-bracket td {
-  font: 13px "DM Mono", monospace;
+  font:
+    13px "DM Mono",
+    monospace;
   color: #e2f2ff;
   text-align: center;
   min-width: 42px;
@@ -103,7 +107,9 @@
   color: #d8e5f4;
   padding: 7px 4px;
   text-align: center;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
 }
 .la-input-grid input:focus,
 .la-cgrid input:focus {
@@ -130,7 +136,9 @@
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #dbeaf7;
   border-bottom: 1px solid #2f4560;
   padding: 0 2px;
@@ -147,7 +155,9 @@
   margin: 6px 0;
 }
 .la-eq {
-  font: 13px/1.9 "DM Mono", monospace;
+  font:
+    13px/1.9 "DM Mono",
+    monospace;
   color: #cfe8f7;
   margin: 8px 0;
   overflow-wrap: anywhere;
@@ -176,7 +186,9 @@
   margin: 0 auto;
 }
 .la-cayley th {
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #8fa3b9;
   padding: 4px 6px;
 }
@@ -184,7 +196,9 @@
   width: 30px;
   height: 28px;
   text-align: center;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #f0f8ff;
   border-radius: 4px;
   cursor: pointer;
@@ -296,7 +310,9 @@
 }
 .la-vec3 b {
   width: 28px;
-  font: 600 13px "DM Mono", monospace;
+  font:
+    600 13px "DM Mono",
+    monospace;
 }
 .la-vec3 input {
   width: 64px;
@@ -306,14 +322,18 @@
   color: #d8e5f4;
   padding: 6px 4px;
   text-align: center;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
 }
 .la-tiles {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  font: 16px "DM Mono", monospace;
+  font:
+    16px "DM Mono",
+    monospace;
   color: #8fa3b9;
 }
 .la-tile {
@@ -329,13 +349,17 @@
   display: grid;
   place-items: center;
   border-radius: 4px;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #f0f8ff;
 }
 .la-tile-label {
   display: block;
   text-align: center;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   color: #8fa3b9;
   margin-top: 4px;
 }

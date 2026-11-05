@@ -1,7 +1,13 @@
 /* Supabase connection. The site works without it: if the two environment variables are missing,
  * `supabase` is null and data stays in this browser's localStorage, as before. */
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { dbFromRows, isEmptyDiff, type Diff, type Rows } from "../domain/sync";
+import {
+  dbFromRows,
+  fetchAllRows,
+  isEmptyDiff,
+  type Diff,
+  type Rows,
+} from "../domain/sync";
 import type { DB } from "../domain/tracking";
 
 const url = import.meta.env.VITE_SUPABASE_URL;
@@ -10,30 +16,39 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase: SupabaseClient | null =
   url && key ? createClient(url, key) : null;
 
-/** Read every table and assemble the app's DB object. */
+/** Read every table (all pages) and assemble the app's DB object. */
 export async function fetchCloudDB(): Promise<DB> {
   const db = supabase!;
   const [students, attempts, activity, assignments] = await Promise.all([
-    db.from("students").select("id, name, demo"),
-    db
-      .from("attempts")
-      .select(
-        "student_id, problem_id, topic, correct, given, misconception, hint, at",
-      )
-      .order("at")
-      .limit(50000),
-    db.from("activity").select("student_id, topic, seconds, steps"),
-    db.from("assignments").select("id, title, problem_ids, auto, created_at"),
+    fetchAllRows((from, to) =>
+      db.from("students").select("id, name, demo").order("id").range(from, to),
+    ),
+    fetchAllRows((from, to) =>
+      db
+        .from("attempts")
+        .select(
+          "student_id, problem_id, topic, correct, given, misconception, hint, at",
+        )
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows((from, to) =>
+      db
+        .from("activity")
+        .select("student_id, topic, seconds, steps")
+        .order("student_id")
+        .order("topic")
+        .range(from, to),
+    ),
+    fetchAllRows((from, to) =>
+      db
+        .from("assignments")
+        .select("id, title, problem_ids, auto, created_at")
+        .order("id")
+        .range(from, to),
+    ),
   ]);
-  const err =
-    students.error ?? attempts.error ?? activity.error ?? assignments.error;
-  if (err) throw err;
-  return dbFromRows({
-    students: students.data ?? [],
-    attempts: attempts.data ?? [],
-    activity: activity.data ?? [],
-    assignments: assignments.data ?? [],
-  } as Rows);
+  return dbFromRows({ students, attempts, activity, assignments } as Rows);
 }
 
 /** Write one set of changes. Students go first because the other tables refer to them. */

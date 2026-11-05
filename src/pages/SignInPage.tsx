@@ -9,12 +9,9 @@ import {
 } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useAuth } from "../lib/auth";
+import { safeNext } from "../lib/safeNext";
 
 type Tab = "signin" | "signup" | "reset";
-
-/** Only allow in-site paths as the place to go after signing in. */
-const safeNext = (next: string | null) =>
-  next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
 
 export function SignInPage() {
   const auth = useAuth();
@@ -122,7 +119,15 @@ export function SignInPage() {
             <strong>{auth.profile?.name ?? "…"}</strong>
             <small>{auth.user.email}</small>
           </div>
-          <Messages {...msg} />
+          <Messages
+            {...msg}
+            error={msg.error ?? auth.profileError ?? undefined}
+          />
+          {auth.profileError && (
+            <button className="btn btn-secondary" onClick={auth.reloadProfile}>
+              Try again
+            </button>
+          )}
           <div className="auth-actions">
             <Link
               className="btn btn-primary btn-lg"

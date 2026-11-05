@@ -104,7 +104,9 @@ export function LabPage({ course }: { course: Course }) {
     : slug(studentName);
   const student = studentId ? (db.students[studentId] ?? null) : null;
   const checkingAccount =
-    accounts && (auth.loading || (!!auth.user && !auth.profile));
+    accounts &&
+    (auth.loading || (!!auth.user && !auth.profile && !auth.profileError));
+  const accountError = accounts && !!auth.user && !!auth.profileError;
   const signInLink = (m: Mode) =>
     `/signin?next=${encodeURIComponent(`${window.location.pathname}?mode=${m}`)}`;
 
@@ -473,6 +475,19 @@ export function LabPage({ course }: { course: Course }) {
           {mode === "teacher" &&
             (accounts && checkingAccount ? (
               <Gate title="Checking your account…" text="One moment." />
+            ) : accountError ? (
+              <Gate
+                title="Couldn't load your account"
+                text={auth.profileError!}
+                actions={
+                  <button
+                    className="btn btn-primary"
+                    onClick={auth.reloadProfile}
+                  >
+                    Try again
+                  </button>
+                }
+              />
             ) : accounts && !auth.user ? (
               <Gate
                 title="Teachers only"
@@ -507,6 +522,19 @@ export function LabPage({ course }: { course: Course }) {
           {mode === "student" &&
             (accounts && checkingAccount ? (
               <Gate title="Checking your account…" text="One moment." />
+            ) : accountError ? (
+              <Gate
+                title="Couldn't load your account"
+                text={auth.profileError!}
+                actions={
+                  <button
+                    className="btn btn-primary"
+                    onClick={auth.reloadProfile}
+                  >
+                    Try again
+                  </button>
+                }
+              />
             ) : accounts && !auth.user ? (
               <Gate
                 title="Sign in to practise"
@@ -633,7 +661,11 @@ export function LabPage({ course }: { course: Course }) {
           </section>
           <footer className="app-footer">
             <span>{course.footer}</span>
-            <span>Browser-local data · No server accounts</span>
+            <span>
+              {accounts
+                ? "Progress saved to your account"
+                : "Progress saved in this browser"}
+            </span>
           </footer>
         </div>
       </main>

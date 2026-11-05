@@ -34,13 +34,17 @@
 }
 .landing-brand strong {
   display: block;
-  font: 700 17px "Space Grotesk", sans-serif;
+  font:
+    700 17px "Space Grotesk",
+    sans-serif;
   letter-spacing: 1.2px;
 }
 .landing-brand small {
   display: block;
   margin-top: 2px;
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   letter-spacing: 1.6px;
   color: #71869e;
 }
@@ -71,7 +75,9 @@
   padding: 56px 0 48px;
 }
 .landing-hero h1 {
-  font: 600 clamp(34px, 5vw, 58px) / 1.06 "Space Grotesk", sans-serif;
+  font:
+    600 clamp(34px, 5vw, 58px) / 1.06 "Space Grotesk",
+    sans-serif;
   letter-spacing: -1.6px;
   margin: 20px 0 18px;
   color: #f0f6ff;
@@ -105,7 +111,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 1px;
   color: #73cfee;
 }
@@ -131,11 +139,15 @@
 }
 .landing-stats strong {
   display: block;
-  font: 600 30px "Space Grotesk", sans-serif;
+  font:
+    600 30px "Space Grotesk",
+    sans-serif;
   color: #f0f6ff;
 }
 .landing-stats span {
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 1px;
   color: #71849b;
   text-transform: uppercase;
@@ -151,7 +163,9 @@
 }
 .section-head h2,
 .landing-final h2 {
-  font: 600 clamp(24px, 3vw, 32px) / 1.2 "Space Grotesk", sans-serif;
+  font:
+    600 clamp(24px, 3vw, 32px) / 1.2 "Space Grotesk",
+    sans-serif;
   letter-spacing: -0.6px;
   color: #f0f6ff;
   margin: 10px 0 8px;
@@ -180,21 +194,27 @@
   align-items: center;
 }
 .unit-card-num {
-  font: 600 13px "DM Mono", monospace;
+  font:
+    600 13px "DM Mono",
+    monospace;
   color: #67d9ff;
   border: 1px solid #2c526b;
   border-radius: 6px;
   padding: 3px 7px;
 }
 .unit-card-short {
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   letter-spacing: 1.2px;
   color: #60748c;
 }
 .unit-card h3,
 .mode-card h3,
 .method-steps h3 {
-  font: 600 18px "Space Grotesk", sans-serif;
+  font:
+    600 18px "Space Grotesk",
+    sans-serif;
   color: #f0f6ff;
   margin: 16px 0 6px;
 }
@@ -289,7 +309,9 @@
   position: absolute;
   top: 18px;
   right: 20px;
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #3d5269;
 }
 
@@ -337,7 +359,9 @@
   align-items: center;
   gap: 8px;
   color: #67d9ff;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   border: 1px solid #2c526b;
   border-radius: 8px;
   padding: 8px 12px;
@@ -346,7 +370,9 @@
   background: #12283a;
 }
 .site-footer h4 {
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   letter-spacing: 1.25px;
   text-transform: uppercase;
   color: #73cfee;
@@ -389,12 +415,16 @@
   margin-top: 36px;
   padding: 18px 0 8px;
   border-top: 1px solid #172333;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 0.8px;
   color: #60748c;
 }
 .morph-dim {
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   letter-spacing: 1px;
   vertical-align: middle;
   color: #8798ad;
@@ -462,11 +492,15 @@
 }
 .morph-caption strong {
   display: block;
-  font: 600 15px "Space Grotesk", sans-serif;
+  font:
+    600 15px "Space Grotesk",
+    sans-serif;
   transition: color 0.4s;
 }
 .morph-caption code {
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #8798ad;
 }
 .morph-dots {
@@ -522,7 +556,9 @@ a.subject-card:hover {
   align-items: center;
 }
 .subject-glyph {
-  font: 600 14px "DM Mono", monospace;
+  font:
+    600 14px "DM Mono",
+    monospace;
   color: #67d9ff;
   background: #12283a;
   border-radius: 8px;
@@ -536,7 +572,9 @@ a.subject-card:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   letter-spacing: 1.2px;
   color: #60748c;
 }
@@ -544,7 +582,9 @@ a.subject-card:hover {
   color: #64e0b4;
 }
 .subject-card h3 {
-  font: 600 18px "Space Grotesk", sans-serif;
+  font:
+    600 18px "Space Grotesk",
+    sans-serif;
   color: #f0f6ff;
   margin: 16px 0 6px;
 }
@@ -581,7 +621,9 @@ a.subject-card:hover {
   border-radius: 5px;
   background: transparent;
   color: #8798ad;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 0.6px;
   padding: 5px 9px;
 }
@@ -592,7 +634,9 @@ a.subject-card:hover {
 }
 .landing-demo .morph-hint {
   margin: 8px 0 0;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 0.4px;
   color: #60748c;
 }

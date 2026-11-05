@@ -64,7 +64,7 @@ With Supabase connected, practising (Student mode) and the Teacher dashboard nee
    - **Redirect URLs**: add `https://your-site.vercel.app/signin` and `http://localhost:5173/signin`
 
    Confirmation and password-reset emails link back to these.
-3. **Choose email confirmation.** In **Authentication → Sign In / Providers → Email**, "Confirm email" is on by default: new users must click a link before signing in. Leave it on for real use; turn it off while testing. Supabase's built-in mailer sends only a few emails per hour — for a whole class, add your own SMTP under **Authentication → Emails → SMTP Settings**.
+3. **Keep email confirmation on.** In **Authentication → Sign In / Providers → Email**, leave "Confirm email" switched on, so new users must click a link before signing in. Teacher rights are tied to an email address, and confirmation is what proves the person owns it: with it off, anyone could sign up using a listed teacher's email and see every student's data. Supabase's built-in mailer sends only a few emails per hour, so for a whole class add your own SMTP under **Authentication → Emails → SMTP Settings**.
 4. **Make yourself a teacher.** Every new account is a student. To make someone a teacher, add their email (lower-case) in **Table Editor → teacher_emails → Insert row**, or in the SQL Editor:
 
    ```sql
@@ -90,6 +90,8 @@ The database rules (Row Level Security in `schema.sql`) are what protect the dat
 - A **student** can read and add only their own answers and activity, and can't see other students.
 - A **teacher** can read every student's progress, create assignments, and add or remove the demo class.
 - Nobody can edit or delete real answers from the website, and roles can only be changed in the Supabase dashboard.
+- Teacher rights also require a confirmed email address, and a student can't mark their own record as "demo" (which would let "Remove demo class" delete it).
+- After changing `schema.sql`, run it again in the SQL Editor; it is safe to re-run.
 - The publishable (anon) key in the website is meant to be public; never put the secret / service_role key in the site.
 
 Data recorded before accounts existed (students identified only by a typed name) stays in the database and is visible to teachers, but can't be claimed by a student account. Without Supabase configured, the site falls back to the old name-only mode with data kept in the browser.
@@ -208,7 +210,7 @@ Follows the syllabus unit by unit (27 topics, 54 practice problems). Most visual
 ## Current limits
 
 - Without Supabase configured, data lives only in the browser's `localStorage` and there are no accounts. With it, there is still one class: every teacher sees every student (no separate classes or rosters yet).
-- Student identity is a typed name, not authentication.
+- Without Supabase configured there are no accounts: a student is identified by the name they type.
 - Auto-grading covers multiple-choice and numeric problems only. The old keyword-based writing checklist is no longer used.
 - Visualizer step counts are tracked for the sorting and BFS/DFS steppers and all Unit 1 steppers; other visualizers record time only.
 - Some panels are still concept demonstrators (tree panel, Boyer–Moore, shortest-path rounds use fixed illustrative values).

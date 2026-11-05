@@ -95,6 +95,32 @@ export function dbFromRows(r: Rows): DB {
   return { v: 1, students, assignments };
 }
 
+/* ---------- Reading whole tables ---------- */
+
+type Page<T> = PromiseLike<{ data: T[] | null; error: unknown }>;
+
+/**
+ * Read every row of a table, one page at a time. Supabase caps each request (1,000 rows by
+ * default), so a single request silently drops the rest. This keeps asking from where the last
+ * page ended until a page comes back empty, so it works whatever the project's cap is.
+ * `fetchPage(from, to)` must return rows in a stable order (e.g. by primary key).
+ */
+export async function fetchAllRows<T>(
+  fetchPage: (from: number, to: number) => Page<T>,
+  pageSize = 1000,
+): Promise<T[]> {
+  const out: T[] = [];
+  for (;;) {
+    const { data, error } = await fetchPage(
+      out.length,
+      out.length + pageSize - 1,
+    );
+    if (error) throw error;
+    if (!data?.length) return out;
+    out.push(...data);
+  }
+}
+
 /* ---------- What changed between two DB states ---------- */
 
 export type Diff = {
@@ -149,16 +175,17 @@ export function diffDB(prev: DB, next: DB): Diff {
 }
 
 /**
- * Combine what the database holds with what this browser recorded (for example while offline,
- * or before the database existed). Nothing is lost: extra local attempts are kept and activity
- * totals take the larger value.
+ * Combine what the database holds with what this browser recorded (for example while offline).
+ * Real progress is never lost: extra local attempts are kept and activity totals take the larger
+ * value. Demo students that are no longer in the database stay deleted.
  */
 export function mergeDB(cloud: DB, local: DB): DB {
   const students: Record<string, Student> = { ...cloud.students };
   for (const s of Object.values(local.students)) {
     const c = students[s.id];
     if (!c) {
-      students[s.id] = s;
+      // A demo student missing from the database was removed by a teacher: don't bring it back.
+      if (!s.demo) students[s.id] = s;
       continue;
     }
     const activity = { ...c.activity };

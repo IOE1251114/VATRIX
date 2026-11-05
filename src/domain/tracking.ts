@@ -68,6 +68,9 @@ const saveDB = (key: string, db: DB) => {
   }
 };
 
+/** Longest wait before changes from other devices appear. */
+const REFRESH_MS = 2000;
+
 export type SyncStatus =
   "local" | "signed-out" | "connecting" | "synced" | "saving" | "offline";
 
@@ -173,9 +176,12 @@ export function useDB(owner?: string | null) {
     };
     void firstLoad();
     // Refresh after changes from any device, once our own pending writes have finished.
+    // Throttled, not debounced: with a whole class active, changes never stop arriving, so a
+    // debounce would never fire. This refreshes at most once every REFRESH_MS.
     const stop = watchCloud(() => {
-      clearTimeout(timer);
+      if (timer) return;
       timer = setTimeout(() => {
+        timer = undefined;
         void queue.current.then(async () => {
           if (!alive || !ready.current) return;
           try {
@@ -184,7 +190,7 @@ export function useDB(owner?: string | null) {
             /* keep the current copy; the next change will retry */
           }
         });
-      }, 1500);
+      }, REFRESH_MS);
     });
     return () => {
       alive = false;

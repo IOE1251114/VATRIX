@@ -21,7 +21,9 @@
   text-decoration: none;
 }
 .auth-card h1 {
-  font: 600 24px "Space Grotesk", sans-serif;
+  font:
+    600 24px "Space Grotesk",
+    sans-serif;
   letter-spacing: -0.4px;
   color: #f0f6ff;
   margin: 0;
@@ -33,7 +35,9 @@
   margin: 0;
 }
 .auth-lead code {
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #cfe8f7;
 }
 .auth-tabs {
@@ -133,7 +137,9 @@
   background: #0b131f;
 }
 .auth-account strong {
-  font: 600 17px "Space Grotesk", sans-serif;
+  font:
+    600 17px "Space Grotesk",
+    sans-serif;
   color: #f0f6ff;
 }
 .auth-account small {
@@ -147,7 +153,9 @@
   width: fit-content;
   padding: 3px 9px;
   border-radius: 999px;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   background: #12283a;

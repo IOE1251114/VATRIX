@@ -9,8 +9,16 @@ import {
   YAxis,
 } from "recharts";
 import { CircleHelp, Milestone } from "lucide-react";
-import { bellmanFord, dagShortest, dijkstra } from "../../../domain/daa/unit3/algos";
-import { presets, randomGraph, type PresetId } from "../../../domain/daa/unit3/graphs";
+import {
+  bellmanFord,
+  dagShortest,
+  dijkstra,
+} from "../../../domain/daa/unit3/algos";
+import {
+  presets,
+  randomGraph,
+  type PresetId,
+} from "../../../domain/daa/unit3/graphs";
 import {
   Legend,
   PlayerBar,

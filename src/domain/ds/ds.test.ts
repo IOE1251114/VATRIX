@@ -227,10 +227,28 @@ describe("Unit III — stacks and queues", () => {
     expect(solveMaze(grid, "stack").at(-1)!.path).toBeDefined();
     // The two mazes shown in the lab are solvable, and the stack's path is longer than the queue's.
     for (const m of [
-      ["S.........", "..........", "....##....", "....##....", "..........", "..........", ".........E"],
-      ["S....#....", ".###.#.##.", ".#.......#", ".#.####.#.", "...#..#...", "##.#.##.#.", "...#.....E"],
+      [
+        "S.........",
+        "..........",
+        "....##....",
+        "....##....",
+        "..........",
+        "..........",
+        ".........E",
+      ],
+      [
+        "S....#....",
+        ".###.#.##.",
+        ".#.......#",
+        ".#.####.#.",
+        "...#..#...",
+        "##.#.##.#.",
+        "...#.....E",
+      ],
     ])
-      expect(solveMaze(m, "stack").at(-1)!.path!.length).toBeGreaterThan(solveMaze(m, "queue").at(-1)!.path!.length);
+      expect(solveMaze(m, "stack").at(-1)!.path!.length).toBeGreaterThan(
+        solveMaze(m, "queue").at(-1)!.path!.length,
+      );
   });
 });
 

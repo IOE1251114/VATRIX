@@ -8,6 +8,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -27,6 +28,10 @@ export type Auth = {
   loading: boolean;
   user: User | null;
   profile: Profile | null;
+  /** Set when the profile (name and role) could not be loaded after retrying. */
+  profileError: string | null;
+  /** Try loading the profile again (after profileError). */
+  reloadProfile: () => void;
   /** The user arrived from a password-reset email and should choose a new password. */
   recovering: boolean;
   signIn: (email: string, password: string) => Promise<Result>;
@@ -53,7 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(!!supabase);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [profileAttempt, setProfileAttempt] = useState(0);
   const [recovering, setRecovering] = useState(false);
+  const userId = user?.id ?? null;
+  const latestUser = useRef(user);
+  latestUser.current = user;
 
   useEffect(() => {
     if (!supabase) return;
@@ -68,37 +78,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  // Load the profile (name and role) whenever the signed-in user changes.
+  // Load the profile (name and role) when a different user signs in. Keyed on the id, not the
+  // user object, which Supabase replaces on every hourly session refresh.
   useEffect(() => {
-    if (!supabase || !user) {
-      setProfile(null);
-      return;
-    }
+    setProfile(null); // never show the previous account's role while the new one loads
+    setProfileError(null);
+    if (!supabase || !userId) return;
     let alive = true;
-    void supabase
-      .from("profiles")
-      .select("id, name, email, role")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!alive) return;
-        // Fall back to the sign-up details if the profile row is missing (schema not run yet).
-        setProfile(
-          (data as Profile | null) ?? {
-            id: user.id,
-            name:
-              (user.user_metadata?.full_name as string) ||
-              user.email?.split("@")[0] ||
-              "Student",
-            email: user.email ?? "",
-            role: "student",
-          },
-        );
-      });
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const load = async () => {
+      const { data, error } = await supabase!
+        .from("profiles")
+        .select("id, name, email, role")
+        .eq("id", userId)
+        .maybeSingle();
+      if (!alive) return;
+      if (error) {
+        // A failed request must not quietly turn a teacher into a student: retry, then report it.
+        tries++;
+        if (tries < 3) timer = setTimeout(load, 1000 * tries);
+        else
+          setProfileError(
+            "We couldn't load your account. Check your connection and try again.",
+          );
+        return;
+      }
+      const u = latestUser.current;
+      // No profile row means the database schema hasn't been run yet: fall back to a student.
+      setProfile(
+        (data as Profile | null) ?? {
+          id: userId,
+          name:
+            (u?.user_metadata?.full_name as string) ||
+            u?.email?.split("@")[0] ||
+            "Student",
+          email: u?.email ?? "",
+          role: "student",
+        },
+      );
+    };
+    void load();
     return () => {
       alive = false;
+      clearTimeout(timer);
     };
-  }, [user]);
+  }, [userId, profileAttempt]);
+
+  const reloadProfile = useCallback(() => setProfileAttempt((n) => n + 1), []);
 
   const signIn = useCallback(
     async (email: string, password: string): Promise<Result> => {
@@ -161,6 +188,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       user,
       profile,
+      profileError,
+      reloadProfile,
       recovering,
       signIn,
       signUp,
@@ -172,6 +201,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       user,
       profile,
+      profileError,
+      reloadProfile,
       recovering,
       signIn,
       signUp,

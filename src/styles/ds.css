@@ -2,7 +2,9 @@
 
 .ds-label {
   display: block;
-  font: 8px "DM Mono", monospace;
+  font:
+    8px "DM Mono",
+    monospace;
   letter-spacing: 0.6px;
   color: #7890a8;
   margin: 12px 0 6px;
@@ -54,7 +56,9 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 .ds-code {
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #cfe8f7;
   background: #0b1420;
   border: 1px solid #23364b;
@@ -102,12 +106,16 @@
     transform 0.2s;
 }
 .ds-cell b {
-  font: 400 13px "DM Mono", monospace;
+  font:
+    400 13px "DM Mono",
+    monospace;
   color: #e2f2ff;
   min-height: 17px;
 }
 .ds-cell i {
-  font: normal 8px "DM Mono", monospace;
+  font:
+    normal 8px "DM Mono",
+    monospace;
   color: #6c8299;
   margin-top: 3px;
 }
@@ -124,7 +132,9 @@
 }
 .ds-cell.hi {
   border-color: #f4c56a;
-  box-shadow: 0 0 0 1px #f4c56a, 0 0 14px #f4c56a40;
+  box-shadow:
+    0 0 0 1px #f4c56a,
+    0 0 14px #f4c56a40;
   transform: translateY(-2px);
   opacity: 1;
 }
@@ -134,7 +144,9 @@
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font: 8px "DM Mono", monospace;
+  font:
+    8px "DM Mono",
+    monospace;
   color: #f4c56a;
 }
 
@@ -152,7 +164,9 @@
   border: 1px solid #2a3b50;
   border-radius: 999px;
   padding: 5px 11px;
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   color: #8fa3b9;
 }
 .ds-hierarchy span.on {
@@ -220,18 +234,24 @@
   border-color: #1aab80;
 }
 .ds-compare strong {
-  font: 600 14px "Space Grotesk", sans-serif;
+  font:
+    600 14px "Space Grotesk",
+    sans-serif;
   color: #e7f4ff;
   margin-bottom: 6px;
 }
 .ds-compare small {
-  font: 8px "DM Mono", monospace;
+  font:
+    8px "DM Mono",
+    monospace;
   letter-spacing: 0.6px;
   color: #7890a8;
   margin-top: 6px;
 }
 .ds-compare b {
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #cfe8f7;
 }
 .ds-meter {
@@ -270,10 +290,14 @@
   color: #dbeaf7;
 }
 .ds-grid button b {
-  font: 400 10px "DM Mono", monospace;
+  font:
+    400 10px "DM Mono",
+    monospace;
 }
 .ds-grid button i {
-  font: normal 8px "DM Mono", monospace;
+  font:
+    normal 8px "DM Mono",
+    monospace;
   color: #6c8299;
 }
 .ds-grid button:hover {
@@ -293,7 +317,9 @@
   height: 28px;
   display: grid;
   place-items: center;
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #4f6680;
   background: #0d1724;
   border-radius: 4px;
@@ -339,7 +365,9 @@
   overflow-x: auto;
 }
 .ds-code-block code {
-  font: 11px/1.7 "DM Mono", monospace;
+  font:
+    11px/1.7 "DM Mono",
+    monospace;
   color: #8fa3b9;
   white-space: pre;
   padding: 0 6px;
@@ -368,7 +396,9 @@
   background: #142234;
   border-radius: 6px;
   padding: 8px 11px;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #dbeaf7;
   animation: ds-drop 0.25s ease;
 }
@@ -466,7 +496,9 @@
   border: 1px solid #1ea0ca;
   border-radius: 5px;
   background: #13273a;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #e2f2ff;
 }
 .ds-gnode > * {
@@ -515,7 +547,9 @@
   border: 1px solid #2a3d51;
   border-radius: 6px;
   background: #142234;
-  font: 12px "DM Mono", monospace;
+  font:
+    12px "DM Mono",
+    monospace;
   color: #e2f2ff;
   overflow: hidden;
   transition: border-color 0.2s;
@@ -564,11 +598,15 @@
   background: #142234;
   border-radius: 6px;
   padding: 7px 10px;
-  font: 13px "DM Mono", monospace;
+  font:
+    13px "DM Mono",
+    monospace;
   color: #e2f2ff;
 }
 .ds-vcell i {
-  font: normal 9px "DM Mono", monospace;
+  font:
+    normal 9px "DM Mono",
+    monospace;
   color: #6c8299;
 }
 .ds-vcell span {
@@ -589,7 +627,9 @@
   justify-items: start;
 }
 .ds-ptr-label {
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   color: #f4c56a;
 }
 .ds-vnode {
@@ -598,7 +638,9 @@
   border: 1px solid #1ea0ca;
   border-radius: 6px;
   background: #13273a;
-  font: 13px "DM Mono", monospace;
+  font:
+    13px "DM Mono",
+    monospace;
   color: #e2f2ff;
 }
 .ds-vnode > * {
@@ -636,7 +678,9 @@
   border-radius: 5px;
   background: #142234;
   padding: 6px 7px;
-  font: 13px "DM Mono", monospace;
+  font:
+    13px "DM Mono",
+    monospace;
   color: #dbeaf7;
 }
 .ds-tokens span.done {
@@ -670,7 +714,9 @@
   border: 0;
   border-radius: 3px;
   background: #101b29;
-  font: 600 11px "DM Mono", monospace;
+  font:
+    600 11px "DM Mono",
+    monospace;
   color: #e7f4ff;
   padding: 0;
   transition: background 0.15s;
@@ -700,7 +746,9 @@
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
-  font: 9px "DM Mono", monospace;
+  font:
+    9px "DM Mono",
+    monospace;
   color: #8fa3b9;
   margin: 6px 0;
 }
@@ -763,14 +811,18 @@
   animation: ds-drop 0.25s ease;
 }
 .ds-run i {
-  font: normal 9px "DM Mono", monospace;
+  font:
+    normal 9px "DM Mono",
+    monospace;
   color: #7890a8;
   width: 46px;
 }
 .ds-run span {
   min-width: 26px;
   text-align: center;
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #dbeaf7;
   background: #142234;
   border-radius: 4px;
