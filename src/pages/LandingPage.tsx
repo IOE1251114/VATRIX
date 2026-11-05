@@ -22,11 +22,10 @@ import { dsUnits } from "../domain/ds/units";
 import { laUnits } from "../domain/la/units";
 import type { Unit } from "../domain/course";
 import { useAuth } from "../lib/auth";
+import { Copyright } from "../components/Copyright";
+import { site } from "../domain/site";
 
-const contact = {
-  email: "ayaanmittal193@gmail.com",
-  founders: ["Ayaan Mittal", "Abhishek Roy"],
-};
+const contact = site;
 
 /** Live courses, in the order their tabs appear on the page. */
 const courses: {
@@ -418,8 +417,7 @@ export function LandingPage() {
         </div>
 
         <div className="site-footer-bottom">
-          <span>© {new Date().getFullYear()} Vatrix. All rights reserved.</span>
-          <span>Founded by {contact.founders.join(" & ")}</span>
+          <Copyright />
         </div>
       </footer>
     </div>

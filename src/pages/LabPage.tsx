@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useAuth } from "../lib/auth";
+import { Copyright } from "../components/Copyright";
 import { StudentPanel } from "../components/modes/StudentPanel";
 import { TeacherDashboard } from "../components/modes/TeacherDashboard";
 import { subjects } from "../domain/subjects";
@@ -666,6 +667,7 @@ export function LabPage({ course }: { course: Course }) {
                 ? "Progress saved to your account"
                 : "Progress saved in this browser"}
             </span>
+            <Copyright />
           </footer>
         </div>
       </main>

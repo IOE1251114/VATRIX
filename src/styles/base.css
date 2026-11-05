@@ -2559,3 +2559,24 @@ input[type="range"] {
 .sync-offline .sync-dot {
   background: #ff8b9a;
 }
+/* Copyright notice (components/Copyright.tsx), on every page. */
+.copyright {
+  flex-basis: 100%;
+  margin: 0;
+  font:
+    9px/1.6 "DM Mono",
+    monospace;
+  letter-spacing: 0.4px;
+  color: #60748c;
+}
+.app-footer {
+  flex-wrap: wrap;
+}
+.app-footer .copyright {
+  padding-top: 8px;
+  border-top: 1px solid #16212f;
+}
+.auth-page .copyright {
+  max-width: 440px;
+  text-align: center;
+}

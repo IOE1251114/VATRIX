@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useAuth } from "../lib/auth";
+import { Copyright } from "../components/Copyright";
 import { safeNext } from "../lib/safeNext";
 
 type Tab = "signin" | "signup" | "reset";
@@ -71,6 +72,7 @@ export function SignInPage() {
             <ArrowLeft size={14} /> Back to home
           </Link>
         </section>
+        <Copyright />
       </main>
     );
 
@@ -98,6 +100,7 @@ export function SignInPage() {
             </button>
           </form>
         </section>
+        <Copyright />
       </main>
     );
 
@@ -149,6 +152,7 @@ export function SignInPage() {
             </button>
           </div>
         </section>
+        <Copyright />
       </main>
     );
 
@@ -284,6 +288,7 @@ export function SignInPage() {
           <Link to="/">Continue without an account</Link>
         </div>
       </section>
+      <Copyright />
     </main>
   );
 }
