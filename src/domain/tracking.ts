@@ -125,13 +125,15 @@ export function useDB(owner?: string | null) {
       );
   }, []);
 
+  /** Apply a change. `upload: false` is for changes the database already has (answers graded
+   *  by submit_attempt): they are cached here without being sent again. */
   const update = useCallback(
-    (fn: (d: DB) => DB) => {
+    (fn: (d: DB) => DB, opts?: { upload?: boolean }) => {
       const prev = current.current;
       const next = fn(prev);
       if (next === prev) return;
       commit(next);
-      send(diffDB(prev, next));
+      if (opts?.upload !== false) send(diffDB(prev, next));
     },
     [commit, send],
   );

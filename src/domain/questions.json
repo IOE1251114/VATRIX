@@ -1,0 +1,1852 @@
+[
+  {
+    "id": "ram-1",
+    "topic": "ram",
+    "kind": "num",
+    "prompt": "for i in 1..n { for j in 1..n { x ← x + 1 } }. For n = 8, how many times does x ← x + 1 execute?",
+    "hint": "Multiply outer iterations by inner iterations.",
+    "tag": "Miscounts loop iterations"
+  },
+  {
+    "id": "ram-2",
+    "topic": "ram",
+    "kind": "mcq",
+    "prompt": "In the RAM model, one assignment x ← a[i] costs:",
+    "options": [
+      "Θ(n), arrays are large",
+      "1 unit (constant)",
+      "Depends on the value stored",
+      "Θ(log n)"
+    ],
+    "hint": "What does the model assume about primitive operations?",
+    "tag": "Misunderstands RAM unit-cost assumption"
+  },
+  {
+    "id": "asym-1",
+    "topic": "asymptotic",
+    "kind": "mcq",
+    "prompt": "f(n) = 3n² + 8n + 12. Which statement is TRUE?",
+    "options": [
+      "f(n) = O(n³) and f(n) = Θ(n²)",
+      "f(n) = Θ(n³)",
+      "f(n) = O(n) because 8n dominates",
+      "Big-O always means worst-case running time"
+    ],
+    "hint": "O is an upper bound, Θ is tight.",
+    "tag": "Confuses O with Θ"
+  },
+  {
+    "id": "asym-2",
+    "topic": "asymptotic",
+    "kind": "mcq",
+    "prompt": "Which function grows fastest as n → ∞?",
+    "options": [
+      "n log n",
+      "n²",
+      "2ⁿ",
+      "n³"
+    ],
+    "hint": "Exponentials eventually beat every polynomial.",
+    "tag": "Misranks growth rates"
+  },
+  {
+    "id": "cx-1",
+    "topic": "complexity",
+    "kind": "num",
+    "prompt": "for i in 1..n { for j in 1..i { work } }. For n = 10, how many times does work execute?",
+    "hint": "The inner loop runs i times: sum 1 + 2 + … + n.",
+    "tag": "Treats triangular loop as n × n"
+  },
+  {
+    "id": "cx-2",
+    "topic": "complexity",
+    "kind": "mcq",
+    "prompt": "Solve T(n) = 2T(n/2) + n.",
+    "options": [
+      "Θ(n)",
+      "Θ(n log n)",
+      "Θ(n²)",
+      "Θ(log n)"
+    ],
+    "hint": "Compare n^(log_b a) with the combine cost n.",
+    "tag": "Mis-solves a divide-and-conquer recurrence"
+  },
+  {
+    "id": "par-1",
+    "topic": "paradigms",
+    "kind": "mcq",
+    "prompt": "Whose correctness is typically proved with an exchange argument?",
+    "options": [
+      "Greedy",
+      "Backtracking",
+      "Branch and bound",
+      "Brute-force enumeration"
+    ],
+    "hint": "Think: swap an optimal choice for the greedy one.",
+    "tag": "Confuses paradigm proof obligations"
+  },
+  {
+    "id": "sort-1",
+    "topic": "sorting",
+    "kind": "num",
+    "prompt": "Standard bubble sort (no early exit) on 4 elements. How many comparisons?",
+    "hint": "Passes compare 3, 2, then 1 pairs.",
+    "tag": "Miscounts comparisons"
+  },
+  {
+    "id": "sort-2",
+    "topic": "sorting",
+    "kind": "mcq",
+    "prompt": "Which is stable and uses O(n) auxiliary space in the standard array version?",
+    "options": [
+      "Selection sort",
+      "Merge sort",
+      "Heap sort",
+      "Bubble sort"
+    ],
+    "hint": "Only one of these needs a temporary merge buffer.",
+    "tag": "Confuses sort stability and space"
+  },
+  {
+    "id": "tree-1",
+    "topic": "trees",
+    "kind": "mcq",
+    "prompt": "Keys 1, 2, 3, 4, 5 are inserted in that order into an unbalanced BST. Height in edges?",
+    "options": [
+      "2",
+      "4",
+      "≈ 2.3 (log₂ 5)",
+      "5"
+    ],
+    "hint": "Where does each new, larger key go?",
+    "tag": "Assumes a BST is always balanced"
+  },
+  {
+    "id": "hash-1",
+    "topic": "hashing",
+    "kind": "num",
+    "prompt": "Hash function h(k) = k mod 7. Which bucket holds key 50?",
+    "hint": "50 = 7·q + r.",
+    "tag": "Modulo arithmetic slip"
+  },
+  {
+    "id": "match-1",
+    "topic": "matching",
+    "kind": "num",
+    "prompt": "KMP: what is the last value of the LPS (prefix) table for pattern \"ABABAB\"?",
+    "hint": "Longest proper prefix that is also a suffix of the whole pattern.",
+    "tag": "Misreads the prefix-function definition"
+  },
+  {
+    "id": "rep-1",
+    "topic": "representations",
+    "kind": "num",
+    "prompt": "A graph has V = 10 vertices. How many cells does its adjacency matrix have?",
+    "hint": "One cell for every ordered vertex pair.",
+    "tag": "Confuses matrix and list space"
+  },
+  {
+    "id": "trav-1",
+    "topic": "traversal",
+    "kind": "mcq",
+    "prompt": "Which data structure drives BFS?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Priority queue",
+      "Hash set only"
+    ],
+    "hint": "BFS visits in layers: first in, first out.",
+    "tag": "Swaps BFS and DFS data structures"
+  },
+  {
+    "id": "topo-1",
+    "topic": "topological",
+    "kind": "mcq",
+    "prompt": "A directed graph contains a cycle. Its topological ordering:",
+    "options": [
+      "Exists and is unique",
+      "Exists but may not be unique",
+      "Does not exist",
+      "Exists only for weighted graphs"
+    ],
+    "hint": "Can every vertex in a cycle come before the others?",
+    "tag": "Ignores the DAG requirement"
+  },
+  {
+    "id": "sp-1",
+    "topic": "shortest",
+    "kind": "mcq",
+    "prompt": "Dijkstra's algorithm can fail when the graph has:",
+    "options": [
+      "Negative edge weights",
+      "Cycles",
+      "Several equal-length paths",
+      "Undirected edges"
+    ],
+    "hint": "What does Dijkstra assume once a vertex is finalized?",
+    "tag": "Misses Dijkstra's nonnegative-weight requirement"
+  },
+  {
+    "id": "mst-1",
+    "topic": "mst",
+    "kind": "num",
+    "prompt": "Edges: A–B 1, B–C 2, C–D 3, A–C 4, B–D 5. What is the MST weight?",
+    "hint": "Process edges in sorted order; skip any that close a cycle.",
+    "tag": "Includes a cycle-forming edge"
+  },
+  {
+    "id": "gr-1",
+    "topic": "greedy",
+    "kind": "mcq",
+    "prompt": "Greedy by value/weight ratio is guaranteed optimal for:",
+    "options": [
+      "Fractional knapsack",
+      "0/1 knapsack",
+      "Both",
+      "Neither"
+    ],
+    "hint": "Can you take half an item?",
+    "tag": "Applies greedy to 0/1 knapsack"
+  },
+  {
+    "id": "dp-1",
+    "topic": "dp",
+    "kind": "num",
+    "prompt": "0/1 knapsack, capacity 8, items (weight, value): (2,12) (3,20) (4,24) (5,25). Optimal value?",
+    "hint": "Try pairs of items whose weights sum to at most 8.",
+    "tag": "Used a greedy choice instead of DP"
+  },
+  {
+    "id": "dp-2",
+    "topic": "dp",
+    "kind": "mcq",
+    "prompt": "Naive recursive Fibonacci is exponential mainly because:",
+    "options": [
+      "Overlapping subproblems are recomputed",
+      "Recursion is always exponential",
+      "Large numbers need big arithmetic",
+      "It uses a table"
+    ],
+    "hint": "How many times is fib(3) computed for fib(6)?",
+    "tag": "Misses overlapping subproblems"
+  },
+  {
+    "id": "np-1",
+    "topic": "pnp",
+    "kind": "mcq",
+    "prompt": "A polynomial-time verifier for yes-certificates shows that a problem is in:",
+    "options": [
+      "P",
+      "NP",
+      "NP-complete",
+      "NP-hard only"
+    ],
+    "hint": "Verifying is not the same as solving, or as being hardest.",
+    "tag": "Confuses NP with P / NP-complete"
+  },
+  {
+    "id": "red-1",
+    "topic": "reductions",
+    "kind": "mcq",
+    "prompt": "To prove problem B is NP-hard, you reduce:",
+    "options": [
+      "B to a known NP-hard problem A",
+      "A known NP-hard problem A to B",
+      "B to itself",
+      "Any problem in P to B"
+    ],
+    "hint": "Which problem must be able to solve the other?",
+    "tag": "Reverses the reduction direction"
+  },
+  {
+    "id": "sat-1",
+    "topic": "sat",
+    "kind": "mcq",
+    "prompt": "Assignment A=T, B=T, C=F on (A ∨ ¬B) ∧ (¬A ∨ C) ∧ (B ∨ C):",
+    "options": [
+      "Satisfying",
+      "Not satisfying: clause 2 is false",
+      "Not satisfying: clause 1 is false",
+      "Not satisfying: clause 3 is false"
+    ],
+    "hint": "Evaluate each clause separately.",
+    "tag": "Mis-evaluates a clause"
+  },
+  {
+    "id": "sort-3",
+    "topic": "sorting",
+    "kind": "num",
+    "prompt": "Quick sort with the LAST key as pivot on the already-sorted array 1, 2, …, 8. How many key comparisons?",
+    "hint": "Each partition compares every other key with the pivot, and the split is 0 : n − 1.",
+    "tag": "Expects n log n for quick sort on every input"
+  },
+  {
+    "id": "sort-4",
+    "topic": "sorting",
+    "kind": "mcq",
+    "prompt": "Which sort has worst-case time Θ(n log n) AND uses only Θ(1) extra space?",
+    "options": [
+      "Quick sort",
+      "Merge sort",
+      "Heap sort",
+      "Insertion sort"
+    ],
+    "hint": "One of them needs a buffer, one has a quadratic worst case.",
+    "tag": "Confuses worst-case time with space"
+  },
+  {
+    "id": "lin-1",
+    "topic": "linear",
+    "kind": "num",
+    "prompt": "Radix sort (least significant digit first, base 10) on keys with at most 3 digits. How many stable passes are needed?",
+    "hint": "One pass per digit position.",
+    "tag": "Misunderstands how radix sort uses digits"
+  },
+  {
+    "id": "lin-2",
+    "topic": "linear",
+    "kind": "mcq",
+    "prompt": "Why can counting sort run in Θ(n + k), below the Ω(n log n) bound?",
+    "options": [
+      "It never compares two keys; it uses key values as array indices",
+      "It is a faster comparison sort",
+      "It only works on input that is already sorted",
+      "The lower bound applies only to recursive algorithms"
+    ],
+    "hint": "What exactly does the Ω(n log n) bound assume about the algorithm?",
+    "tag": "Misreads the comparison-sort lower bound"
+  },
+  {
+    "id": "lin-3",
+    "topic": "linear",
+    "kind": "mcq",
+    "prompt": "In LSD radix sort, what goes wrong if the per-digit sort is NOT stable?",
+    "options": [
+      "The order from earlier digits can be destroyed",
+      "Nothing; any sort works",
+      "It becomes Θ(n²)",
+      "It needs more digits"
+    ],
+    "hint": "Two keys tie on the current digit: which order should they keep?",
+    "tag": "Misses why stability matters in radix sort"
+  },
+  {
+    "id": "tree-2",
+    "topic": "trees",
+    "kind": "mcq",
+    "prompt": "Insert 30, 20, 10 (in that order) into an empty AVL tree. Which fix is applied?",
+    "options": [
+      "Single right rotation at 30 (LL case)",
+      "Single left rotation at 30 (RR case)",
+      "Double rotation (LR case)",
+      "No rotation is needed"
+    ],
+    "hint": "Follow the path from the unbalanced node to the new key.",
+    "tag": "Misidentifies the AVL rotation case"
+  },
+  {
+    "id": "heap-1",
+    "topic": "heaps",
+    "kind": "num",
+    "prompt": "A heap is stored in a 0-based array (children of i are 2i + 1 and 2i + 2). What is the index of the parent of index 10?",
+    "hint": "parent(i) = ⌊(i − 1)/2⌋ for 0-based arrays.",
+    "tag": "Mixes up 0-based and 1-based heap indexing"
+  },
+  {
+    "id": "heap-2",
+    "topic": "heaps",
+    "kind": "mcq",
+    "prompt": "Building a heap bottom-up (heapify from the last internal node to the root) from n unsorted keys takes:",
+    "options": [
+      "Θ(n)",
+      "Θ(n log n)",
+      "Θ(log n)",
+      "Θ(n²)"
+    ],
+    "hint": "Most nodes are near the bottom and can only sink a little.",
+    "tag": "Assumes build-heap costs n separate inserts"
+  },
+  {
+    "id": "hash-2",
+    "topic": "hashing",
+    "kind": "num",
+    "prompt": "m = 7, h(k) = k mod 7 with LINEAR probing. Insert 10, 17, 24 in that order. Which slot does 24 end up in?",
+    "hint": "All three keys hash to slot 3.",
+    "tag": "Ignores collisions in open addressing"
+  },
+  {
+    "id": "match-2",
+    "topic": "matching",
+    "kind": "num",
+    "prompt": "Boyer–Moore bad-character rule: the pattern \"EXAMPLE\" (indices 0–6) mismatches at its last position j = 6 against text character \"S\", which does not occur in the pattern. How far does the pattern shift?",
+    "hint": "shift = j − last(c), and last(c) = −1 when c is not in the pattern.",
+    "tag": "Misapplies the bad-character rule"
+  },
+  {
+    "id": "trav-2",
+    "topic": "traversal",
+    "kind": "mcq",
+    "prompt": "In BFS on an undirected graph, vertex u is at distance 2 from the source. Which distances can its neighbours have?",
+    "options": [
+      "1, 2 or 3",
+      "Only 3",
+      "Any distance",
+      "Only 1 or 3"
+    ],
+    "hint": "Can an edge skip a whole layer?",
+    "tag": "Misunderstands BFS layers"
+  },
+  {
+    "id": "comp-1",
+    "topic": "components",
+    "kind": "num",
+    "prompt": "Undirected graph on vertices A–J with edges A–B, B–C, C–A, C–D, E–F, F–G, H–I. Vertex J has no edges. How many connected components?",
+    "hint": "Start a search from every vertex that has no label yet.",
+    "tag": "Miscounts components"
+  },
+  {
+    "id": "comp-2",
+    "topic": "components",
+    "kind": "mcq",
+    "prompt": "In Kosaraju’s algorithm for strongly connected components, the second DFS runs on:",
+    "options": [
+      "The reversed graph Gᵀ, starting vertices in decreasing finish time",
+      "G again, in increasing finish time",
+      "Gᵀ, in increasing finish time",
+      "An undirected copy of G"
+    ],
+    "hint": "Which vertex finishes last in pass 1, and which SCC is it in?",
+    "tag": "Misremembers Kosaraju’s second pass"
+  },
+  {
+    "id": "bcc-1",
+    "topic": "biconnected",
+    "kind": "mcq",
+    "prompt": "In the low-link DFS, a NON-root vertex u with DFS child v is an articulation point when:",
+    "options": [
+      "low[v] ≥ disc[u]",
+      "low[v] < disc[u]",
+      "disc[v] > disc[u]",
+      "u has at least two children"
+    ],
+    "hint": "Can anything below v climb back above u without u?",
+    "tag": "Misapplies the articulation-point test"
+  },
+  {
+    "id": "bcc-2",
+    "topic": "biconnected",
+    "kind": "num",
+    "prompt": "A path graph 1 – 2 – 3 – 4 – 5. How many articulation points does it have?",
+    "hint": "Which vertices disconnect the path when removed?",
+    "tag": "Miscounts articulation points"
+  },
+  {
+    "id": "sp-2",
+    "topic": "shortest",
+    "kind": "num",
+    "prompt": "Bellman–Ford on a graph with V = 6 vertices: at most how many full passes over the edges are needed before the final negative-cycle check?",
+    "hint": "A shortest path has at most V − 1 edges.",
+    "tag": "Miscounts Bellman–Ford passes"
+  },
+  {
+    "id": "mst-2",
+    "topic": "mst",
+    "kind": "num",
+    "prompt": "Run Kruskal on the 9-vertex textbook graph in the visualizer (vertices a–i, 14 edges). What is the total weight of its minimum spanning tree?",
+    "hint": "Add the 8 green edges once Kruskal finishes.",
+    "tag": "Miscounts the MST weight"
+  },
+  {
+    "id": "dij-1",
+    "topic": "dijkstra",
+    "kind": "mcq",
+    "prompt": "Dijkstra’s algorithm with distances kept in a plain array (extract-min by linear scan) runs in:",
+    "options": [
+      "Θ(V² + E) = Θ(V²)",
+      "O((V + E) log V)",
+      "O(E log E)",
+      "Θ(V + E)"
+    ],
+    "hint": "How long does one extract-min take, and how many are there?",
+    "tag": "Confuses the array and heap bounds"
+  },
+  {
+    "id": "dij-2",
+    "topic": "dijkstra",
+    "kind": "mcq",
+    "prompt": "For a complete graph (E ≈ V²), which priority queue gives the better worst-case bound for Dijkstra?",
+    "options": [
+      "A plain array: Θ(V²)",
+      "A binary heap: O(V² log V)",
+      "Both are the same",
+      "Neither: Dijkstra cannot run on dense graphs"
+    ],
+    "hint": "Substitute E = V² into (V + E) log V.",
+    "tag": "Assumes heaps are always faster"
+  },
+  {
+    "id": "gr-2",
+    "topic": "greedy",
+    "kind": "num",
+    "prompt": "Fractional knapsack, capacity 50, items (weight, value): (10, 60), (20, 100), (30, 120). What is the maximum value?",
+    "hint": "Sort by value/weight and take a fraction of the last item.",
+    "tag": "Treats the problem as 0/1"
+  },
+  {
+    "id": "huf-1",
+    "topic": "huffman",
+    "kind": "num",
+    "prompt": "Huffman code for frequencies a:45, b:13, c:12, d:16, e:9, f:5. What is the total encoded length Σ f(c)·len(c)?",
+    "hint": "Code lengths are 1 for a, 3 for b, c, d and 4 for e, f.",
+    "tag": "Miscomputes the Huffman cost"
+  },
+  {
+    "id": "huf-2",
+    "topic": "huffman",
+    "kind": "num",
+    "prompt": "Huffman coding on 8 distinct symbols. How many merge steps (extract two, insert one) does it perform?",
+    "hint": "Each merge reduces the number of trees in the queue by one.",
+    "tag": "Miscounts the merges"
+  },
+  {
+    "id": "bin-1",
+    "topic": "binomial",
+    "kind": "num",
+    "prompt": "Using Pascal’s triangle, what is C(7, 3)?",
+    "hint": "C(7, 3) = C(6, 2) + C(6, 3).",
+    "tag": "Misreads Pascal’s triangle"
+  },
+  {
+    "id": "bin-2",
+    "topic": "binomial",
+    "kind": "num",
+    "prompt": "The plain recursion C(n, k) = C(n−1, k−1) + C(n−1, k) is called for C(6, 3). Counting the first call, how many calls are made in total?",
+    "hint": "Every leaf returns 1, and the leaves add up to C(6, 3).",
+    "tag": "Ignores repeated calls"
+  },
+  {
+    "id": "mc-1",
+    "topic": "matrixchain",
+    "kind": "num",
+    "prompt": "Matrices A₁ (10×30), A₂ (30×5), A₃ (5×60). Minimum number of scalar multiplications to compute A₁A₂A₃?",
+    "hint": "Compare (A₁A₂)A₃ with A₁(A₂A₃).",
+    "tag": "Picks the wrong bracketing"
+  },
+  {
+    "id": "mc-2",
+    "topic": "matrixchain",
+    "kind": "num",
+    "prompt": "How many different full bracketings does a product of 5 matrices have?",
+    "hint": "The count is the Catalan number C(n − 1).",
+    "tag": "Miscounts the bracketings"
+  },
+  {
+    "id": "lcs-1",
+    "topic": "lcs",
+    "kind": "num",
+    "prompt": "What is the length of the longest common subsequence of X = ABCBDAB and Y = BDCABA?",
+    "hint": "Fill the table or look for BCBA.",
+    "tag": "Miscomputes the LCS length"
+  },
+  {
+    "id": "lcs-2",
+    "topic": "lcs",
+    "kind": "mcq",
+    "prompt": "When X[i] ≠ Y[j], the LCS recurrence sets c[i][j] to:",
+    "options": [
+      "max(c[i−1][j], c[i][j−1])",
+      "c[i−1][j−1] + 1",
+      "c[i−1][j−1]",
+      "min(c[i−1][j], c[i][j−1])"
+    ],
+    "hint": "Which character could you drop?",
+    "tag": "Misremembers the LCS recurrence"
+  },
+  {
+    "id": "np-2",
+    "topic": "pnp",
+    "kind": "num",
+    "prompt": "A computer does 10⁹ basic steps per second. What is the largest n for which an algorithm taking exactly 2ⁿ steps finishes within one second?",
+    "hint": "2¹⁰ ≈ 10³, so 2³⁰ ≈ 10⁹. Is 2³⁰ itself within the budget?",
+    "tag": "Misjudges exponential growth"
+  },
+  {
+    "id": "npc-1",
+    "topic": "npc",
+    "kind": "mcq",
+    "prompt": "A problem L is NP-complete when:",
+    "options": [
+      "L ∈ NP and every problem in NP reduces to L in polynomial time",
+      "L cannot be solved in polynomial time",
+      "L reduces to SAT",
+      "L is NP-hard, whether or not it is in NP"
+    ],
+    "hint": "Two conditions are needed. What are they?",
+    "tag": "Misstates the definition of NP-complete"
+  },
+  {
+    "id": "npc-2",
+    "topic": "npc",
+    "kind": "mcq",
+    "prompt": "Someone finds an O(n⁵) algorithm for 3-SAT. What follows?",
+    "options": [
+      "P = NP",
+      "Only 3-SAT becomes easy",
+      "NP-hard problems outside NP become decidable",
+      "Nothing, since 3-SAT is in P already"
+    ],
+    "hint": "Every NP problem reduces to 3-SAT in polynomial time.",
+    "tag": "Misses the consequence of NP-completeness"
+  },
+  {
+    "id": "red-2",
+    "topic": "reductions",
+    "kind": "num",
+    "prompt": "In the CNF-SAT ≤p INDEPENDENT-SET reduction, a formula has 5 clauses of 3 literals each. How many vertices does the graph have?",
+    "hint": "One vertex per literal occurrence.",
+    "tag": "Miscounts the reduction graph"
+  },
+  {
+    "id": "sat-2",
+    "topic": "sat",
+    "kind": "num",
+    "prompt": "A CNF formula has 6 variables. How many rows does the brute-force truth table have?",
+    "hint": "Each variable is true or false independently.",
+    "tag": "Miscounts assignments"
+  },
+  {
+    "id": "ham-1",
+    "topic": "hamiltonian",
+    "kind": "mcq",
+    "prompt": "Which of these is known to be solvable in polynomial time?",
+    "options": [
+      "Deciding whether a graph has an Euler circuit",
+      "Deciding whether a graph has a Hamiltonian cycle",
+      "Deciding whether a graph has a Hamiltonian path",
+      "TSP: is there a tour of cost ≤ k?"
+    ],
+    "hint": "One of these has a simple degree test.",
+    "tag": "Confuses Euler and Hamilton"
+  },
+  {
+    "id": "ham-2",
+    "topic": "hamiltonian",
+    "kind": "num",
+    "prompt": "Reduce HAM-CYCLE to TSP for an 8-vertex graph: edges of G cost 1, non-edges cost 2. G is Hamiltonian exactly when the cheapest tour costs at most:",
+    "hint": "A tour has n edges. What if they are all real edges of G?",
+    "tag": "Misapplies the HAM ≤p TSP bound"
+  },
+  {
+    "id": "tsp-2",
+    "topic": "tsp",
+    "kind": "num",
+    "prompt": "In a metric TSP instance the minimum spanning tree weighs 20. At most how much can the MST-based (preorder) tour cost?",
+    "hint": "The full walk around the tree uses every edge twice; shortcuts only help.",
+    "tag": "Misremembers the 2-approximation bound"
+  },
+  {
+    "id": "tsp-1",
+    "topic": "tsp",
+    "kind": "num",
+    "prompt": "TSP with 5 cities and a fixed start city. How many distinct directed tours exist?",
+    "hint": "Fix the start, then order the remaining cities.",
+    "tag": "Uses n! instead of (n−1)!"
+  },
+  {
+    "id": "dsb-1",
+    "topic": "ds-basics",
+    "kind": "mcq",
+    "prompt": "A student record has fields Roll no, Name, Dept, Marks. Which field is the best primary key?",
+    "options": [
+      "Name",
+      "Roll no",
+      "Dept",
+      "Marks"
+    ],
+    "hint": "A primary key must be unique for every record.",
+    "tag": "Confuses primary and secondary keys"
+  },
+  {
+    "id": "dsb-2",
+    "topic": "ds-basics",
+    "kind": "mcq",
+    "prompt": "Keeping a sorted index of a file so it can be binary-searched is an example of…",
+    "options": [
+      "a time–space trade-off",
+      "a traversal",
+      "a stable sort",
+      "hashing"
+    ],
+    "hint": "What is spent, and what is gained?",
+    "tag": "Misses the time–space trade-off"
+  },
+  {
+    "id": "dsam-1",
+    "topic": "ds-array-memory",
+    "kind": "num",
+    "prompt": "A[1932..1984] holds 4-byte words at base address 200. What is LOC(A[1965])?",
+    "hint": "LOC = Base + w(K − LB).",
+    "tag": "Applies the 1-D address formula incorrectly"
+  },
+  {
+    "id": "dsam-2",
+    "topic": "ds-array-memory",
+    "kind": "num",
+    "prompt": "A 25 × 4 array (indices from 1) is stored column-major at base 200 with w = 4. What is the address of A[12, 3]?",
+    "hint": "Column-major: Base + w[M(K − 1) + (J − 1)] with M = 25 rows.",
+    "tag": "Mixes up row- and column-major"
+  },
+  {
+    "id": "dsao-1",
+    "topic": "ds-array-ops",
+    "kind": "num",
+    "prompt": "An array holds 8 elements in positions 1..8. How many elements move to insert a new element at position 3?",
+    "hint": "Elements at positions 3..8 each move one place.",
+    "tag": "Miscounts shifts for insertion"
+  },
+  {
+    "id": "dsao-2",
+    "topic": "ds-array-ops",
+    "kind": "mcq",
+    "prompt": "When inserting into the middle of an array, in which order should elements be shifted?",
+    "options": [
+      "From the first element forwards",
+      "From the last element backwards",
+      "Any order works",
+      "Only the element at the position moves"
+    ],
+    "hint": "What happens to A[k+1] if you copy A[k] into it first?",
+    "tag": "Shifts in the wrong direction"
+  },
+  {
+    "id": "dss-1",
+    "topic": "ds-search",
+    "kind": "num",
+    "prompt": "At most how many comparisons does binary search need on a sorted array of 1000 elements?",
+    "hint": "⌊log₂ n⌋ + 1.",
+    "tag": "Misapplies the log₂ bound"
+  },
+  {
+    "id": "dss-2",
+    "topic": "ds-search",
+    "kind": "mcq",
+    "prompt": "Why is binary search unsuitable for a singly linked list?",
+    "options": [
+      "The list must be sorted",
+      "It cannot reach the middle element in constant time",
+      "Lists cannot store numbers",
+      "It needs recursion"
+    ],
+    "hint": "How long does it take to reach the middle node?",
+    "tag": "Misses the random-access requirement"
+  },
+  {
+    "id": "dssp-1",
+    "topic": "ds-sparse",
+    "kind": "num",
+    "prompt": "A 6 × 6 matrix has 8 non-zero entries. How many rows does its triplet table have, including the header row?",
+    "hint": "One row per non-zero term plus row 0 for (rows, cols, count).",
+    "tag": "Forgets the header row"
+  },
+  {
+    "id": "dssp-2",
+    "topic": "ds-sparse",
+    "kind": "mcq",
+    "prompt": "Fast transpose runs in which time for c columns and t terms?",
+    "options": [
+      "Θ(c · t)",
+      "Θ(c + t)",
+      "Θ(t log t)",
+      "Θ(c²)"
+    ],
+    "hint": "It makes one pass to count and one pass to place.",
+    "tag": "Confuses simple and fast transpose"
+  },
+  {
+    "id": "dsr-1",
+    "topic": "ds-recursion",
+    "kind": "num",
+    "prompt": "How many frames are on the call stack at the deepest point of fact(6) (base case n ≤ 1)?",
+    "hint": "Calls go fact(6), fact(5), … down to fact(1).",
+    "tag": "Miscounts recursion depth"
+  },
+  {
+    "id": "dsr-2",
+    "topic": "ds-recursion",
+    "kind": "num",
+    "prompt": "Naive recursive fib(5) makes how many calls in total (including fib(5) itself)?",
+    "hint": "Calls(n) = Calls(n−1) + Calls(n−2) + 1, with Calls(0) = Calls(1) = 1.",
+    "tag": "Underestimates repeated calls"
+  },
+  {
+    "id": "dsbt-1",
+    "topic": "ds-backtracking",
+    "kind": "mcq",
+    "prompt": "In backtracking, what happens when a partial solution violates a constraint?",
+    "options": [
+      "The algorithm stops",
+      "It undoes the last choice and tries the next option",
+      "It restarts from scratch",
+      "It accepts it anyway"
+    ],
+    "hint": "Think of the N-Queens board.",
+    "tag": "Misunderstands backtracking"
+  },
+  {
+    "id": "dsbt-2",
+    "topic": "ds-backtracking",
+    "kind": "num",
+    "prompt": "How many solutions does the 4-Queens problem have?",
+    "hint": "Try placing the first queen in column 2 or 3.",
+    "tag": "Does not know the 4-Queens solutions"
+  },
+  {
+    "id": "dsll-1",
+    "topic": "ds-linked",
+    "kind": "mcq",
+    "prompt": "To insert NEW after node CUR in a singly linked list, which order of statements is correct?",
+    "options": [
+      "CUR.next = NEW; NEW.next = CUR.next",
+      "NEW.next = CUR.next; CUR.next = NEW",
+      "Either order works",
+      "NEW.next = CUR; CUR.next = NEW"
+    ],
+    "hint": "What does CUR.next hold after the first assignment?",
+    "tag": "Loses the rest of the list"
+  },
+  {
+    "id": "dsll-2",
+    "topic": "ds-linked",
+    "kind": "mcq",
+    "prompt": "Which operation is Θ(1) in a doubly linked list but Θ(n) in a singly linked list (given a pointer to the node)?",
+    "options": [
+      "Insert at the head",
+      "Delete that node",
+      "Search for a value",
+      "Traverse the list"
+    ],
+    "hint": "To delete a node you must update its predecessor.",
+    "tag": "Misses the benefit of prev pointers"
+  },
+  {
+    "id": "dsp-1",
+    "topic": "ds-polynomial",
+    "kind": "mcq",
+    "prompt": "Adding P = 3x² + 2x + 1 and Q = x² − 2x + 4 gives…",
+    "options": [
+      "4x² + 5",
+      "4x² + 4x + 5",
+      "4x² − 5",
+      "3x² + 5"
+    ],
+    "hint": "Add coefficients of equal exponents.",
+    "tag": "Mishandles cancelling terms"
+  },
+  {
+    "id": "dsp-2",
+    "topic": "ds-polynomial",
+    "kind": "num",
+    "prompt": "Multiplying a 3-term polynomial by a 4-term polynomial forms how many term products before combining?",
+    "hint": "Every term of P meets every term of Q.",
+    "tag": "Miscounts products"
+  },
+  {
+    "id": "dsst-1",
+    "topic": "ds-stack",
+    "kind": "num",
+    "prompt": "Starting with an empty stack: push 4, push 7, pop, push 2, push 9, pop, pop. What is on top now?",
+    "hint": "Write the stack after every operation.",
+    "tag": "Mis-tracks LIFO order"
+  },
+  {
+    "id": "dsst-2",
+    "topic": "ds-stack",
+    "kind": "mcq",
+    "prompt": "In an array stack with MAX = 5 (indices 1..5), PUSH fails when…",
+    "options": [
+      "TOP = 0",
+      "TOP = 5",
+      "TOP = 1",
+      "the stack is empty"
+    ],
+    "hint": "Overflow means no room left.",
+    "tag": "Confuses overflow and underflow"
+  },
+  {
+    "id": "dsh-1",
+    "topic": "ds-hanoi",
+    "kind": "num",
+    "prompt": "How many moves does the Tower of Hanoi need for 6 disks?",
+    "hint": "T(n) = 2T(n − 1) + 1.",
+    "tag": "Misremembers 2ⁿ − 1"
+  },
+  {
+    "id": "dsh-2",
+    "topic": "ds-hanoi",
+    "kind": "num",
+    "prompt": "In the optimal solution for n disks, how many times does the largest disk move?",
+    "hint": "Look at the middle step of TOWER(N, …).",
+    "tag": "Misunderstands the recursive structure"
+  },
+  {
+    "id": "dsq-1",
+    "topic": "ds-queue",
+    "kind": "num",
+    "prompt": "A circular queue has capacity 6 and REAR = 5. After one more ADD, what is REAR (indices 0..5)?",
+    "hint": "REAR = (REAR + 1) mod N.",
+    "tag": "Forgets to wrap around"
+  },
+  {
+    "id": "dsq-2",
+    "topic": "ds-queue",
+    "kind": "mcq",
+    "prompt": "Why can a linear array queue report overflow even when slots are free?",
+    "options": [
+      "FRONT moves past freed slots and REAR cannot reuse them",
+      "Queues cannot be stored in arrays",
+      "DELETE does not free memory",
+      "The queue is full"
+    ],
+    "hint": "Where are the free slots?",
+    "tag": "Misses the wasted front slots"
+  },
+  {
+    "id": "dspq-1",
+    "topic": "ds-pq",
+    "kind": "mcq",
+    "prompt": "In a max-heap stored in an array (1-based), where are the children of node i?",
+    "options": [
+      "i + 1 and i + 2",
+      "2i and 2i + 1",
+      "i/2 and i/2 + 1",
+      "2i − 1 and 2i"
+    ],
+    "hint": "Level-order layout doubles the index each level.",
+    "tag": "Misremembers heap indexing"
+  },
+  {
+    "id": "dspq-2",
+    "topic": "ds-pq",
+    "kind": "mcq",
+    "prompt": "Which priority-queue representation gives O(log n) for both insert and delete-max?",
+    "options": [
+      "Unsorted array",
+      "Sorted linked list",
+      "Binary heap",
+      "Stack"
+    ],
+    "hint": "Which structure keeps the maximum at the root of a balanced tree?",
+    "tag": "Picks a linear-time representation"
+  },
+  {
+    "id": "dse-1",
+    "topic": "ds-expressions",
+    "kind": "mcq",
+    "prompt": "What is the postfix form of A + B * C?",
+    "options": [
+      "A B + C *",
+      "A B C * +",
+      "+ A * B C",
+      "A B C + *"
+    ],
+    "hint": "* binds tighter than +.",
+    "tag": "Ignores operator precedence"
+  },
+  {
+    "id": "dse-2",
+    "topic": "ds-expressions",
+    "kind": "num",
+    "prompt": "Evaluate the postfix expression 5 6 2 + * 12 4 / −.",
+    "hint": "On an operator, pop B then A and compute A op B.",
+    "tag": "Pops operands in the wrong order"
+  },
+  {
+    "id": "dsm-1",
+    "topic": "ds-maze",
+    "kind": "mcq",
+    "prompt": "Which structure guarantees that the first path found through a maze is a shortest one?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Either",
+      "Neither"
+    ],
+    "hint": "Which one explores cells in order of distance?",
+    "tag": "Confuses DFS and BFS"
+  },
+  {
+    "id": "dsm-2",
+    "topic": "ds-maze",
+    "kind": "mcq",
+    "prompt": "In the stack-based maze search, what does reaching a dead end cause?",
+    "options": [
+      "The program fails",
+      "The next pop resumes from an earlier unexplored branch",
+      "The maze is reset",
+      "The queue is emptied"
+    ],
+    "hint": "What is left on the stack?",
+    "tag": "Misunderstands backtracking with a stack"
+  },
+  {
+    "id": "dstb-1",
+    "topic": "ds-tree-basics",
+    "kind": "num",
+    "prompt": "What is the maximum number of nodes in a binary tree with 5 levels?",
+    "hint": "Sum 2⁰ + 2¹ + … + 2⁴.",
+    "tag": "Misapplies 2ᵈ − 1"
+  },
+  {
+    "id": "dstb-2",
+    "topic": "ds-tree-basics",
+    "kind": "num",
+    "prompt": "A binary tree has 10 internal nodes and internal path length I = 19. What is its external path length E?",
+    "hint": "In an extended binary tree, E = I + 2n.",
+    "tag": "Does not know E = I + 2n"
+  },
+  {
+    "id": "dset-1",
+    "topic": "ds-expression-tree",
+    "kind": "mcq",
+    "prompt": "In an expression tree, which traversal produces the postfix expression?",
+    "options": [
+      "Preorder",
+      "Inorder",
+      "Postorder",
+      "Level order"
+    ],
+    "hint": "Postfix puts the operator after its operands.",
+    "tag": "Mixes up traversal and notation"
+  },
+  {
+    "id": "dset-2",
+    "topic": "ds-expression-tree",
+    "kind": "num",
+    "prompt": "The expression tree for (A + B) * C has A = 2, B = 3, C = 4. What value does the root hold after evaluation?",
+    "hint": "Evaluate the + subtree first.",
+    "tag": "Evaluates in the wrong order"
+  },
+  {
+    "id": "dsbst-1",
+    "topic": "ds-bst",
+    "kind": "num",
+    "prompt": "Keys 50, 30, 70, 20, 40, 60, 80 are inserted into an empty BST. How many comparisons does a successful search for 60 make?",
+    "hint": "Follow 50 → 70 → 60.",
+    "tag": "Miscounts the search path"
+  },
+  {
+    "id": "dsbst-2",
+    "topic": "ds-bst",
+    "kind": "mcq",
+    "prompt": "Deleting a BST node with two children replaces it with…",
+    "options": [
+      "its left child",
+      "its in-order successor (or predecessor)",
+      "the root",
+      "the largest key in the tree"
+    ],
+    "hint": "Which key keeps the BST order if moved here?",
+    "tag": "Mishandles two-child deletion"
+  },
+  {
+    "id": "dshf-1",
+    "topic": "ds-huffman",
+    "kind": "num",
+    "prompt": "Weights 2, 3, 5, 7 are combined by Huffman's algorithm. What is the weight of the root?",
+    "hint": "Each merge adds the two smallest weights.",
+    "tag": "Misunderstands Huffman merging"
+  },
+  {
+    "id": "dshf-2",
+    "topic": "ds-huffman",
+    "kind": "num",
+    "prompt": "With weights 2, 3, 5, 7, what is the minimum weighted path length Σ wᵢ·Lᵢ?",
+    "hint": "Depths: 7 at 1, 5 at 2, 2 and 3 at 3.",
+    "tag": "Computes weighted path length incorrectly"
+  },
+  {
+    "id": "dsgt-1",
+    "topic": "ds-general-threaded",
+    "kind": "mcq",
+    "prompt": "When a general tree is converted to a binary tree, the right pointer of a node points to its…",
+    "options": [
+      "first child",
+      "parent",
+      "next sibling",
+      "last child"
+    ],
+    "hint": "Left = first child, right = ?",
+    "tag": "Mixes up child and sibling pointers"
+  },
+  {
+    "id": "dsgt-2",
+    "topic": "ds-general-threaded",
+    "kind": "num",
+    "prompt": "A binary tree with 12 nodes has how many empty (NULL) pointers that threading can reuse?",
+    "hint": "2n pointers in total, n − 1 of them are edges.",
+    "tag": "Miscounts null pointers"
+  },
+  {
+    "id": "dstr-1",
+    "topic": "ds-trie",
+    "kind": "num",
+    "prompt": "How many character comparisons (edges followed) does a trie need to find the key “graph”, however many words are stored?",
+    "hint": "One edge per character.",
+    "tag": "Thinks trie lookup depends on dictionary size"
+  },
+  {
+    "id": "dstr-2",
+    "topic": "ds-trie",
+    "kind": "mcq",
+    "prompt": "The trie holds tree, trie and try. Searching for “tri” ends on an existing node. What is the result?",
+    "options": [
+      "Found",
+      "Only a prefix: not a stored word",
+      "Not found at all",
+      "Error"
+    ],
+    "hint": "Is the last node marked as the end of a word?",
+    "tag": "Ignores the end-of-word marker"
+  },
+  {
+    "id": "dses-1",
+    "topic": "ds-elementary-sorts",
+    "kind": "num",
+    "prompt": "How many comparisons does selection sort make on 6 elements?",
+    "hint": "n(n − 1)/2 regardless of input.",
+    "tag": "Misremembers selection sort's comparison count"
+  },
+  {
+    "id": "dses-2",
+    "topic": "ds-elementary-sorts",
+    "kind": "mcq",
+    "prompt": "Which elementary sort is not stable?",
+    "options": [
+      "Bubble sort",
+      "Insertion sort",
+      "Selection sort",
+      "All are stable"
+    ],
+    "hint": "Which one swaps elements far apart?",
+    "tag": "Does not know which sorts are stable"
+  },
+  {
+    "id": "dsas-1",
+    "topic": "ds-advanced-sorts",
+    "kind": "mcq",
+    "prompt": "Which sort has a worst case of Θ(n²) but averages Θ(n log n)?",
+    "options": [
+      "Merge sort",
+      "Heap sort",
+      "Quick sort",
+      "Insertion sort"
+    ],
+    "hint": "Which one depends on the pivot?",
+    "tag": "Mixes up worst cases of n log n sorts"
+  },
+  {
+    "id": "dsas-2",
+    "topic": "ds-advanced-sorts",
+    "kind": "mcq",
+    "prompt": "Two-way merge sort needs which extra space for n elements?",
+    "options": [
+      "Θ(1)",
+      "Θ(log n)",
+      "Θ(n)",
+      "Θ(n²)"
+    ],
+    "hint": "Where do merged elements go?",
+    "tag": "Forgets merge sort's buffer"
+  },
+  {
+    "id": "dske-1",
+    "topic": "ds-keys-external",
+    "kind": "num",
+    "prompt": "A file of 1,600 records is sorted with memory for 100 records and two-way merging. How many merge passes are needed?",
+    "hint": "16 runs; each pass halves the number of runs.",
+    "tag": "Miscomputes merge passes"
+  },
+  {
+    "id": "dske-2",
+    "topic": "ds-keys-external",
+    "kind": "mcq",
+    "prompt": "To sort by department and, within a department, by marks using a stable sort, sort first by…",
+    "options": [
+      "department, then marks",
+      "marks, then department",
+      "either order",
+      "both keys at once only"
+    ],
+    "hint": "The last pass decides the main order.",
+    "tag": "Applies the keys in the wrong order"
+  },
+  {
+    "id": "dsha-1",
+    "topic": "ds-hashing",
+    "kind": "num",
+    "prompt": "Keys are hashed with H(K) = K mod 11. Which slot does key 47 go to?",
+    "hint": "47 = 4 × 11 + ?",
+    "tag": "Computes the division hash incorrectly"
+  },
+  {
+    "id": "dsha-2",
+    "topic": "ds-hashing",
+    "kind": "mcq",
+    "prompt": "Linear probing tends to suffer from…",
+    "options": [
+      "primary clustering",
+      "infinite loops",
+      "no collisions",
+      "sorted output"
+    ],
+    "hint": "What happens to runs of occupied slots?",
+    "tag": "Does not know probing drawbacks"
+  },
+  {
+    "id": "dsgr-1",
+    "topic": "ds-graph-rep",
+    "kind": "num",
+    "prompt": "How many entries does the adjacency matrix of a graph with 7 vertices have?",
+    "hint": "n × n.",
+    "tag": "Miscounts matrix size"
+  },
+  {
+    "id": "dsgr-2",
+    "topic": "ds-graph-rep",
+    "kind": "mcq",
+    "prompt": "The adjacency matrix of an undirected graph is always…",
+    "options": [
+      "upper triangular",
+      "symmetric",
+      "diagonal",
+      "the identity"
+    ],
+    "hint": "If u is adjacent to v, is v adjacent to u?",
+    "tag": "Misses symmetry"
+  },
+  {
+    "id": "dsgtv-1",
+    "topic": "ds-graph-traversal",
+    "kind": "mcq",
+    "prompt": "Breadth-first search uses which data structure?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Heap",
+      "Tree"
+    ],
+    "hint": "BFS visits vertices in order of distance.",
+    "tag": "Confuses BFS and DFS"
+  },
+  {
+    "id": "dsgtv-2",
+    "topic": "ds-graph-traversal",
+    "kind": "num",
+    "prompt": "A connected graph has 6 vertices and 9 edges, stored as adjacency lists. How many list entries does BFS examine in total?",
+    "hint": "Each undirected edge appears in two lists.",
+    "tag": "Miscounts adjacency-list entries"
+  },
+  {
+    "id": "dstp-1",
+    "topic": "ds-topo",
+    "kind": "mcq",
+    "prompt": "A topological order exists if and only if the directed graph…",
+    "options": [
+      "is connected",
+      "has no cycles",
+      "has a vertex of out-degree 0",
+      "is complete"
+    ],
+    "hint": "Can a cycle be ordered so every edge points forward?",
+    "tag": "Does not link topological order to acyclicity"
+  },
+  {
+    "id": "dstp-2",
+    "topic": "ds-topo",
+    "kind": "num",
+    "prompt": "Tasks A→B, A→C, B→D, C→D. How many different topological orders are there?",
+    "hint": "A is first and D is last; what about B and C?",
+    "tag": "Misses alternative orders"
+  },
+  {
+    "id": "dsmg-1",
+    "topic": "ds-multigraph",
+    "kind": "num",
+    "prompt": "An undirected multigraph has 7 edges, one of which is a loop. What is the sum of all vertex degrees?",
+    "hint": "Σ deg = 2|E| always.",
+    "tag": "Forgets that loops count twice"
+  },
+  {
+    "id": "dsmg-2",
+    "topic": "ds-multigraph",
+    "kind": "mcq",
+    "prompt": "In the adjacency matrix of a multigraph, A[i][j] = 3 means…",
+    "options": [
+      "vertex i has degree 3",
+      "there are three edges between vᵢ and vⱼ",
+      "the edge has weight 3",
+      "there is a path of length 3"
+    ],
+    "hint": "What can repeat in a multigraph?",
+    "tag": "Misreads the multigraph matrix"
+  },
+  {
+    "id": "las-1",
+    "topic": "la-structures",
+    "kind": "mcq",
+    "prompt": "For which n is ℤₙ (integers mod n) a field?",
+    "options": [
+      "Every n ≥ 2",
+      "Only even n",
+      "Exactly when n is prime",
+      "Exactly when n is a perfect square"
+    ],
+    "hint": "A field needs an inverse for every non-zero element.",
+    "tag": "Does not know when ℤₙ is a field"
+  },
+  {
+    "id": "las-2",
+    "topic": "la-structures",
+    "kind": "num",
+    "prompt": "What is the inverse of 3 in the group (ℤ₇ \\ {0}, ×)?",
+    "hint": "Find b with 3b ≡ 1 (mod 7).",
+    "tag": "Cannot find a multiplicative inverse mod n"
+  },
+  {
+    "id": "lavs-1",
+    "topic": "la-vector-spaces",
+    "kind": "mcq",
+    "prompt": "Which subset of ℝ² is a subspace?",
+    "options": [
+      "The line y = 2x + 1",
+      "The first quadrant",
+      "The line y = −3x",
+      "The union of the x- and y-axes"
+    ],
+    "hint": "A subspace must contain 0 and be closed under + and scaling.",
+    "tag": "Misapplies the subspace test"
+  },
+  {
+    "id": "lavs-2",
+    "topic": "la-vector-spaces",
+    "kind": "mcq",
+    "prompt": "Every subspace must contain…",
+    "options": [
+      "the vector (1, 1, …, 1)",
+      "the zero vector",
+      "the standard basis",
+      "at least two vectors"
+    ],
+    "hint": "Multiply any vector in W by the scalar 0.",
+    "tag": "Forgets that subspaces contain 0"
+  },
+  {
+    "id": "lasp-1",
+    "topic": "la-span",
+    "kind": "num",
+    "prompt": "Three vectors in ℝ³ form a matrix of rank 2. What is the dimension of their span?",
+    "hint": "The span's dimension is the number of independent vectors.",
+    "tag": "Confuses rank and number of vectors"
+  },
+  {
+    "id": "lasp-2",
+    "topic": "la-span",
+    "kind": "mcq",
+    "prompt": "Can four vectors in ℝ³ be linearly independent?",
+    "options": [
+      "Yes, always",
+      "Yes, if they are distinct",
+      "No, never",
+      "Only if one of them is 0"
+    ],
+    "hint": "How many independent vectors can ℝ³ hold?",
+    "tag": "Does not connect independence with dimension"
+  },
+  {
+    "id": "lab-1",
+    "topic": "la-basis",
+    "kind": "num",
+    "prompt": "With basis b₁ = (1, 1), b₂ = (1, −1), what is the first coordinate of p = (5, 1)?",
+    "hint": "Solve a(1,1) + b(1,−1) = (5, 1).",
+    "tag": "Cannot compute coordinates in a basis"
+  },
+  {
+    "id": "lab-2",
+    "topic": "la-basis",
+    "kind": "num",
+    "prompt": "What is the dimension of the space of 2 × 3 real matrices?",
+    "hint": "One basis matrix per entry.",
+    "tag": "Miscounts dimension of a matrix space"
+  },
+  {
+    "id": "lad-1",
+    "topic": "la-direct-sum",
+    "kind": "mcq",
+    "prompt": "V = U ⊕ W requires V = U + W and…",
+    "options": [
+      "U = W",
+      "U ∩ W = {0}",
+      "U ⊥ W",
+      "dim U = dim W"
+    ],
+    "hint": "What makes the split v = u + w unique?",
+    "tag": "Misremembers the direct-sum condition"
+  },
+  {
+    "id": "lad-2",
+    "topic": "la-direct-sum",
+    "kind": "num",
+    "prompt": "U and W are subspaces of ℝ⁵ with dim U = 3, dim W = 2 and ℝ⁵ = U ⊕ W. What is dim(U ∩ W)?",
+    "hint": "dim(U + W) = dim U + dim W − dim(U ∩ W).",
+    "tag": "Misapplies the dimension formula"
+  },
+  {
+    "id": "lar3-1",
+    "topic": "la-r3",
+    "kind": "num",
+    "prompt": "u = (1, 0, 0), v = (0, 2, 0), w = (0, 0, 3). What is the volume of the box they span?",
+    "hint": "Volume = |det[u v w]|.",
+    "tag": "Cannot use the determinant as a volume"
+  },
+  {
+    "id": "lar3-2",
+    "topic": "la-r3",
+    "kind": "mcq",
+    "prompt": "Two non-parallel vectors in ℝ³ span…",
+    "options": [
+      "a line through the origin",
+      "a plane through the origin",
+      "all of ℝ³",
+      "a plane that may miss the origin"
+    ],
+    "hint": "How many independent directions do you get?",
+    "tag": "Misjudges the span of two vectors in ℝ³"
+  },
+  {
+    "id": "lams-1",
+    "topic": "la-matrix-space",
+    "kind": "num",
+    "prompt": "What is the dimension of the subspace of symmetric 2 × 2 matrices?",
+    "hint": "A symmetric matrix [[a, b], [b, d]] has how many free entries?",
+    "tag": "Miscounts the dimension of a matrix subspace"
+  },
+  {
+    "id": "lams-2",
+    "topic": "la-matrix-space",
+    "kind": "mcq",
+    "prompt": "Which set of 2 × 2 matrices is NOT a subspace of M₂ₓ₂?",
+    "options": [
+      "Trace-zero matrices",
+      "Upper triangular matrices",
+      "Invertible matrices",
+      "Diagonal matrices"
+    ],
+    "hint": "Does the set contain the zero matrix?",
+    "tag": "Misapplies the subspace test to matrices"
+  },
+  {
+    "id": "laps-1",
+    "topic": "la-poly-space",
+    "kind": "num",
+    "prompt": "What is the dimension of P₄, the polynomials of degree at most 4?",
+    "hint": "Basis {1, x, x², x³, x⁴}.",
+    "tag": "Forgets the constant term when counting dimension"
+  },
+  {
+    "id": "laps-2",
+    "topic": "la-poly-space",
+    "kind": "num",
+    "prompt": "The derivative D : P₃ → P₃ is linear. What is its nullity?",
+    "hint": "Which polynomials have derivative 0?",
+    "tag": "Cannot find the null space of differentiation"
+  },
+  {
+    "id": "lacs-1",
+    "topic": "la-complex-space",
+    "kind": "num",
+    "prompt": "What is the dimension of ℂ³ as a vector space over ℝ?",
+    "hint": "Each complex coordinate needs two real numbers.",
+    "tag": "Mixes up complex and real dimension"
+  },
+  {
+    "id": "lacs-2",
+    "topic": "la-complex-space",
+    "kind": "num",
+    "prompt": "u = (1 + i, 2i) in ℂ². What is ‖u‖²?",
+    "hint": "‖u‖² = |u₁|² + |u₂|².",
+    "tag": "Forgets to conjugate in the complex inner product"
+  },
+  {
+    "id": "lat-1",
+    "topic": "la-transform",
+    "kind": "mcq",
+    "prompt": "Which map ℝ² → ℝ² is linear?",
+    "options": [
+      "T(x, y) = (x + 1, y)",
+      "T(x, y) = (xy, y)",
+      "T(x, y) = (2x − y, 3y)",
+      "T(x, y) = (x², y)"
+    ],
+    "hint": "A linear map sends 0 to 0 and has no products or powers of variables.",
+    "tag": "Misidentifies linear maps"
+  },
+  {
+    "id": "lat-2",
+    "topic": "la-transform",
+    "kind": "num",
+    "prompt": "T rotates the plane by 90°. What is the (2, 1) entry of its matrix (the y-component of T(e₁))?",
+    "hint": "Where does e₁ = (1, 0) go under a 90° rotation?",
+    "tag": "Cannot build a matrix from images of basis vectors"
+  },
+  {
+    "id": "larn-1",
+    "topic": "la-rank-nullity",
+    "kind": "num",
+    "prompt": "A is a 4 × 7 matrix of rank 3. What is the nullity of A?",
+    "hint": "rank + nullity = number of columns.",
+    "tag": "Misapplies rank–nullity"
+  },
+  {
+    "id": "larn-2",
+    "topic": "la-rank-nullity",
+    "kind": "mcq",
+    "prompt": "A linear map T : ℝ⁵ → ℝ³ can never be…",
+    "options": [
+      "onto",
+      "one-to-one",
+      "zero",
+      "linear"
+    ],
+    "hint": "rank ≤ 3, so what is the smallest possible nullity?",
+    "tag": "Misapplies rank–nullity to injectivity"
+  },
+  {
+    "id": "lapr-1",
+    "topic": "la-projection",
+    "kind": "mcq",
+    "prompt": "Which property defines a projection P?",
+    "options": [
+      "P² = P",
+      "Pᵀ = P⁻¹",
+      "det P = 1",
+      "P² = I"
+    ],
+    "hint": "Projecting a second time changes nothing.",
+    "tag": "Confuses projections with other operators"
+  },
+  {
+    "id": "lapr-2",
+    "topic": "la-projection",
+    "kind": "num",
+    "prompt": "What is the determinant of the orthogonal projection of ℝ² onto a line?",
+    "hint": "Is any direction squashed to 0?",
+    "tag": "Does not connect projections with singularity"
+  },
+  {
+    "id": "lai-1",
+    "topic": "la-inverse",
+    "kind": "num",
+    "prompt": "A = [[2, 1], [5, 3]]. What is the (1, 2) entry of A⁻¹?",
+    "hint": "A⁻¹ = (1/det)[[d, −b], [−c, a]].",
+    "tag": "Misremembers the 2 × 2 inverse formula"
+  },
+  {
+    "id": "lai-2",
+    "topic": "la-inverse",
+    "kind": "mcq",
+    "prompt": "A square matrix A is invertible if and only if…",
+    "options": [
+      "A has no zero entries",
+      "det A ≠ 0",
+      "A is symmetric",
+      "trace A ≠ 0"
+    ],
+    "hint": "Think of rank and the null space.",
+    "tag": "Uses the wrong invertibility test"
+  },
+  {
+    "id": "lacb-1",
+    "topic": "la-change-basis",
+    "kind": "mcq",
+    "prompt": "If P holds the new basis vectors as columns, the matrix of T in the new basis is…",
+    "options": [
+      "PAP⁻¹",
+      "P⁻¹AP",
+      "PᵀAP",
+      "AP"
+    ],
+    "hint": "Convert new coordinates to standard (P), apply A, convert back (P⁻¹).",
+    "tag": "Mixes up the change-of-basis formula"
+  },
+  {
+    "id": "lacb-2",
+    "topic": "la-change-basis",
+    "kind": "mcq",
+    "prompt": "Which quantity can change when a matrix is replaced by a similar matrix?",
+    "options": [
+      "Determinant",
+      "Trace",
+      "Eigenvalues",
+      "The individual entries"
+    ],
+    "hint": "Similar matrices describe the same map.",
+    "tag": "Thinks similarity changes invariants"
+  },
+  {
+    "id": "ladu-1",
+    "topic": "la-dual",
+    "kind": "mcq",
+    "prompt": "The dual basis {f₁, f₂} of {b₁, b₂} is defined by…",
+    "options": [
+      "fᵢ(bⱼ) = 1 for all i, j",
+      "fᵢ(bⱼ) = δᵢⱼ",
+      "fᵢ = bᵢ",
+      "fᵢ(bⱼ) = 0 for all i, j"
+    ],
+    "hint": "fᵢ should read off the i-th coordinate.",
+    "tag": "Misremembers the dual basis"
+  },
+  {
+    "id": "ladu-2",
+    "topic": "la-dual",
+    "kind": "num",
+    "prompt": "V has dimension 4. What is the dimension of its dual space V*?",
+    "hint": "Count the dual basis.",
+    "tag": "Does not know dim V* = dim V"
+  },
+  {
+    "id": "ladt-1",
+    "topic": "la-det-trace",
+    "kind": "num",
+    "prompt": "A 2 × 2 matrix has eigenvalues 3 and −2. What is its determinant?",
+    "hint": "det = product of eigenvalues.",
+    "tag": "Does not connect det with eigenvalues"
+  },
+  {
+    "id": "ladt-2",
+    "topic": "la-det-trace",
+    "kind": "num",
+    "prompt": "det A = 5 for a 3 × 3 matrix A. What is det(2A)?",
+    "hint": "Each of the 3 rows is multiplied by 2.",
+    "tag": "Forgets that scaling multiplies det by cⁿ"
+  },
+  {
+    "id": "lae-1",
+    "topic": "la-eigen",
+    "kind": "num",
+    "prompt": "What is the larger eigenvalue of [[4, 1], [2, 3]]?",
+    "hint": "λ² − (trace)λ + det = 0.",
+    "tag": "Cannot solve the characteristic equation"
+  },
+  {
+    "id": "lae-2",
+    "topic": "la-eigen",
+    "kind": "mcq",
+    "prompt": "A real 2 × 2 rotation by 90° has…",
+    "options": [
+      "two real eigenvalues 1 and −1",
+      "eigenvalue 0",
+      "no real eigenvalues",
+      "every vector as an eigenvector"
+    ],
+    "hint": "Does any direction stay on its own line?",
+    "tag": "Assumes every real matrix has real eigenvalues"
+  },
+  {
+    "id": "lach-1",
+    "topic": "la-cayley",
+    "kind": "num",
+    "prompt": "A 3 × 3 matrix has characteristic polynomial λ³ − 4λ² + λ + 6. What is A³ − 4A² + A + 6I?",
+    "hint": "Every matrix satisfies its characteristic polynomial.",
+    "tag": "Does not apply Cayley–Hamilton"
+  },
+  {
+    "id": "lach-2",
+    "topic": "la-cayley",
+    "kind": "num",
+    "prompt": "What is the degree of the minimal polynomial of the 3 × 3 matrix 5I?",
+    "hint": "Which monic polynomial of lowest degree kills 5I?",
+    "tag": "Confuses minimal and characteristic polynomials"
+  },
+  {
+    "id": "ladg-1",
+    "topic": "la-diagonalize",
+    "kind": "mcq",
+    "prompt": "Which matrix is NOT diagonalizable?",
+    "options": [
+      "[[2, 0], [0, 3]]",
+      "[[1, 1], [0, 1]]",
+      "[[1, 2], [2, 1]]",
+      "[[4, 1], [2, 3]]"
+    ],
+    "hint": "Count independent eigenvectors for a repeated eigenvalue.",
+    "tag": "Does not recognise defective matrices"
+  },
+  {
+    "id": "ladg-2",
+    "topic": "la-diagonalize",
+    "kind": "num",
+    "prompt": "A = PDP⁻¹ with D = diag(2, 3). What is the trace of A³?",
+    "hint": "Trace is similarity-invariant; D³ = diag(8, 27).",
+    "tag": "Cannot use Aᵏ = PDᵏP⁻¹"
+  },
+  {
+    "id": "laj-1",
+    "topic": "la-jordan",
+    "kind": "num",
+    "prompt": "A 3 × 3 matrix has the single eigenvalue 4 with a 2-dimensional eigenspace. How many Jordan blocks does it have?",
+    "hint": "One block per independent eigenvector.",
+    "tag": "Does not link geometric multiplicity to block count"
+  },
+  {
+    "id": "laj-2",
+    "topic": "la-jordan",
+    "kind": "num",
+    "prompt": "A matrix has eigenvalue λ with algebraic multiplicity 3 and geometric multiplicity 1. What is the size of its Jordan block for λ?",
+    "hint": "One block, and the block sizes add up to the algebraic multiplicity.",
+    "tag": "Misreads multiplicities"
+  },
+  {
+    "id": "lan-1",
+    "topic": "la-norms",
+    "kind": "num",
+    "prompt": "A = [[1, −2], [3, 4]]. What is ‖A‖₁ (maximum absolute column sum)?",
+    "hint": "Sum absolute values down each column.",
+    "tag": "Confuses the 1-norm and ∞-norm"
+  },
+  {
+    "id": "lan-2",
+    "topic": "la-norms",
+    "kind": "num",
+    "prompt": "What is ‖A‖₂ for A = diag(3, −5)?",
+    "hint": "Which unit vector is stretched most?",
+    "tag": "Does not know the 2-norm is the largest singular value"
+  },
+  {
+    "id": "lain-1",
+    "topic": "la-inner",
+    "kind": "num",
+    "prompt": "u = (1, 2, 2). What is ‖u‖?",
+    "hint": "‖u‖ = √(u·u).",
+    "tag": "Computes the norm incorrectly"
+  },
+  {
+    "id": "lain-2",
+    "topic": "la-inner",
+    "kind": "num",
+    "prompt": "For which k are (2, k) and (3, −6) orthogonal?",
+    "hint": "Set the dot product to 0.",
+    "tag": "Cannot apply the orthogonality condition"
+  },
+  {
+    "id": "lags-1",
+    "topic": "la-gram-schmidt",
+    "kind": "mcq",
+    "prompt": "In Gram–Schmidt, u₂ = v₂ − ⟨v₂, q₁⟩q₁. What is ⟨u₂, q₁⟩?",
+    "options": [
+      "1",
+      "0",
+      "‖v₂‖",
+      "⟨v₂, q₁⟩"
+    ],
+    "hint": "q₁ is a unit vector.",
+    "tag": "Misses why Gram–Schmidt works"
+  },
+  {
+    "id": "lags-2",
+    "topic": "la-gram-schmidt",
+    "kind": "num",
+    "prompt": "Gram–Schmidt is applied to (1, 0), (3, 4). What is the second component of q₂?",
+    "hint": "q₁ = (1, 0); subtract the projection of (3, 4) on q₁.",
+    "tag": "Makes an arithmetic slip in Gram–Schmidt"
+  },
+  {
+    "id": "lap-1",
+    "topic": "la-orth-proj",
+    "kind": "num",
+    "prompt": "Project b = (3, 4) orthogonally onto the x-axis. What is the length of the error b − proj?",
+    "hint": "The projection is (3, 0).",
+    "tag": "Confuses projection and error"
+  },
+  {
+    "id": "lap-2",
+    "topic": "la-orth-proj",
+    "kind": "mcq",
+    "prompt": "The least-squares solution of Ax = b satisfies…",
+    "options": [
+      "Ax̂ = b",
+      "AᵀAx̂ = Aᵀb",
+      "AAᵀx̂ = b",
+      "x̂ = A⁻¹b"
+    ],
+    "hint": "The residual must be orthogonal to every column of A.",
+    "tag": "Misremembers the normal equations"
+  },
+  {
+    "id": "laop-1",
+    "topic": "la-operators",
+    "kind": "mcq",
+    "prompt": "The eigenvalues of a Hermitian (self-adjoint) matrix are always…",
+    "options": [
+      "real",
+      "purely imaginary",
+      "of modulus 1",
+      "zero"
+    ],
+    "hint": "⟨Av, v⟩ = ⟨v, Av⟩ for self-adjoint A.",
+    "tag": "Mixes up properties of special operators"
+  },
+  {
+    "id": "laop-2",
+    "topic": "la-operators",
+    "kind": "mcq",
+    "prompt": "Which matrix is normal but neither Hermitian nor unitary?",
+    "options": [
+      "[[1, 0], [0, 1]]",
+      "[[1, 1], [0, 1]]",
+      "[[1, −1], [1, 1]]",
+      "[[0, 1], [1, 0]]"
+    ],
+    "hint": "Compute AᵀA and AAᵀ for each.",
+    "tag": "Cannot test A*A = AA*"
+  },
+  {
+    "id": "labf-1",
+    "topic": "la-bilinear",
+    "kind": "num",
+    "prompt": "B(u, v) = uᵀMv with M = [[1, 2], [3, 4]]. What is B(e₁, e₂)?",
+    "hint": "B(eᵢ, eⱼ) = Mᵢⱼ.",
+    "tag": "Mixes up rows and columns of M"
+  },
+  {
+    "id": "labf-2",
+    "topic": "la-bilinear",
+    "kind": "num",
+    "prompt": "For a skew-symmetric bilinear form B, what is B(v, v) for every v?",
+    "hint": "B(v, v) = −B(v, v).",
+    "tag": "Misses the defining property of skew forms"
+  },
+  {
+    "id": "laq-1",
+    "topic": "la-quadratic",
+    "kind": "mcq",
+    "prompt": "q(x, y) = 2x² − 2xy + 2y² is…",
+    "options": [
+      "positive definite",
+      "negative definite",
+      "indefinite",
+      "positive semidefinite but not definite"
+    ],
+    "hint": "S = [[2, −1], [−1, 2]]; check the leading minors.",
+    "tag": "Classifies quadratic forms incorrectly"
+  },
+  {
+    "id": "laq-2",
+    "topic": "la-quadratic",
+    "kind": "num",
+    "prompt": "For which value of c is q = x² + 4xy + cy² positive semidefinite but not positive definite?",
+    "hint": "S = [[1, 2], [2, c]]; when is det S = 0?",
+    "tag": "Misapplies Sylvester's criterion at the boundary"
+  }
+]

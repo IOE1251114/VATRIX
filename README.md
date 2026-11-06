@@ -74,6 +74,23 @@ With Supabase connected, practising (Student mode) and the Teacher dashboard nee
    This works before or after they sign up; their role changes at once (they may need to sign in again). Delete the row to turn a teacher back into a student.
 5. Open `/signin` on the site, create your account and sign in. The lab sidebar shows your name, your role and a Sign out button.
 
+### 6. Load the answer key (server-side grading)
+
+With Supabase connected, answers are checked by the database, not the browser, so the website never contains the answers and students can't record fake scores.
+
+1. Generate the answer-key file (it is git-ignored because it contains every answer):
+
+   ```bash
+   npm run gen:problems
+   ```
+
+2. In Supabase open **SQL Editor → New query**, paste the whole of `supabase/answer-key.sql` and click **Run**. Run `schema.sql` first if you haven't since this change.
+3. After editing any problem in `src/domain/{daa,ds,la}/problems.ts`, run `npm run gen:problems` again and re-run `answer-key.sql`. (`npm run build` regenerates `src/domain/questions.json` automatically; a test fails if it is out of date.)
+
+Until `answer-key.sql` has been run, checking an answer shows an "Unknown problem" or "function not found" message.
+
+**Keep the GitHub repository private.** The answers are written in `src/domain/{daa,ds,la}/problems.ts`; if the repository is public, anyone can read them there. (GitHub → repository **Settings → General → Danger Zone → Change visibility**.)
+
 ### How it works
 
 - `src/lib/auth.tsx` handles sign-in, sign-up, password reset and sign-out, and loads each user's profile (name and role). `src/pages/SignInPage.tsx` is the `/signin` page.
@@ -87,7 +104,7 @@ With Supabase connected, practising (Student mode) and the Teacher dashboard nee
 The database rules (Row Level Security in `schema.sql`) are what protect the data, not the website:
 
 - Signed-out visitors can read and write nothing.
-- A **student** can read and add only their own answers and activity, and can't see other students.
+- A **student** can read only their own answers and activity, and can't see other students. Answers are submitted only through the database function `submit_attempt`, which grades them against the hidden `problem_key` table and records the result, so a student can't write their own score.
 - A **teacher** can read every student's progress, create assignments, and add or remove the demo class.
 - Nobody can edit or delete real answers from the website, and roles can only be changed in the Supabase dashboard.
 - Teacher rights also require a confirmed email address, and a student can't mark their own record as "demo" (which would let "Remove demo class" delete it).
@@ -135,7 +152,9 @@ Data recorded before accounts existed (students identified only by a typed name)
 │   ├── lib/auth.tsx           # Student/teacher accounts: sign in, sign up, reset, roles
 │   ├── styles/                # index.css imports base, lab, per-unit, ds, la and landing styles
 │   └── assets/                # Images bundled by Vite (logo)
-├── supabase/schema.sql        # Tables, accounts/roles, security rules and realtime — run in Supabase
+├── supabase/schema.sql        # Tables, accounts/roles, grading function, security rules — run in Supabase
+├── supabase/answer-key.sql    # Generated, git-ignored: loads the answers into problem_key
+├── scripts/gen-problems.ts    # npm run gen:problems — questions.json + answer-key.sql
 ├── .env.example               # Template for VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
 ├── vercel.json                # SPA rewrite so deep links work on refresh
 └── vite.config.ts
@@ -199,7 +218,9 @@ Follows the syllabus unit by unit (27 topics, 54 practice problems). Most visual
 
 ## How tracking works
 
-- `src/domain/problems.ts`: problem bank. Each wrong answer maps to a named misconception.
+- `src/domain/{daa,ds,la}/problems.ts`: the problem bank with answers. Each wrong answer maps to a named misconception.
+- `scripts/gen-problems.ts` (`npm run gen:problems`): writes `src/domain/questions.json` (questions only — what the website uses) and `supabase/answer-key.sql` (answers for the database).
+- `src/domain/problems.ts`: `checkAnswer` sends an answer to `submit_attempt` when Supabase is configured; in browser-only mode it loads `answerKey.ts` and grades locally. Cloud builds don't include the answer key at all.
 - `src/domain/tracking.ts`: data model, localStorage persistence (`useDB`), analytics, and `useActivityTracker`.
 - Mastery = share of the last 6 attempts answered correctly (a correct answer after a hint counts half), shown only after 2+ attempts. Below 50% = struggling, below 75% = developing.
 - `src/domain/daa/**`, `src/domain/ds/*.ts` and `src/domain/la/*.ts`: pure, deterministic logic behind every visual (seeded, no randomness); the `*.test.ts` files verify it against textbook results.

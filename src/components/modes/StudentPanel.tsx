@@ -10,10 +10,10 @@ import {
   UserRound,
 } from "lucide-react";
 import {
-  grade,
+  checkAnswer,
   problems,
   problemsFor,
-  type Problem,
+  type PublicProblem,
 } from "../../domain/problems";
 import {
   statusLabel,
@@ -35,10 +35,11 @@ interface Props {
   onLogout: () => void;
   /** Label for the logout button ("Switch student" by default). */
   logoutLabel?: string;
-  onAttempt: (a: Attempt) => void;
+  /** `saved`: the database already recorded this attempt (it graded it), so don't upload it again. */
+  onAttempt: (a: Attempt, saved: boolean) => void;
   onOpenVisualizer: (topicId: string) => void;
 }
-type Result = { correct: boolean; misconception?: string };
+type Result = { correct: boolean; misconception?: string; explain: string };
 
 export function StudentPanel({
   db,
@@ -97,24 +98,31 @@ export function StudentPanel({
   const solved = (id: string) =>
     student.attempts.some((a) => a.problemId === id && a.correct);
   const assignment = db.assignments.find((a) => a.id === assignmentId);
-  const list: Problem[] = assignment
+  const list: PublicProblem[] = assignment
     ? assignment.problemIds
         .map((id) => problems.find((p) => p.id === id))
-        .filter((p): p is Problem => !!p)
+        .filter((p): p is PublicProblem => !!p)
     : problemsFor(topic);
   const weak = weakTopics(student, topics);
 
-  const submit = (p: Problem, given: string, hint: boolean): Result => {
-    const r = grade(p, given);
-    onAttempt({
-      problemId: p.id,
-      topic: p.topic,
-      correct: r.correct,
-      given,
-      misconception: r.misconception,
-      hint,
-      at: Date.now(),
-    });
+  const submit = async (
+    p: PublicProblem,
+    given: string,
+    hint: boolean,
+  ): Promise<Result> => {
+    const r = await checkAnswer(p.id, given, hint);
+    onAttempt(
+      {
+        problemId: p.id,
+        topic: p.topic,
+        correct: r.correct,
+        given: given.trim(),
+        misconception: r.misconception,
+        hint,
+        at: r.at,
+      },
+      r.saved,
+    );
     return r;
   };
 
@@ -289,13 +297,30 @@ function ProblemCard({
   solved,
   onSubmit,
 }: {
-  p: Problem;
+  p: PublicProblem;
   solved: boolean;
-  onSubmit: (given: string, hint: boolean) => Result;
+  onSubmit: (given: string, hint: boolean) => Promise<Result>;
 }) {
   const [given, setGiven] = useState("");
   const [hint, setHint] = useState(false);
   const [res, setRes] = useState<Result | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const check = async () => {
+    setChecking(true);
+    setError(null);
+    try {
+      setRes(await onSubmit(given, hint));
+    } catch (e) {
+      setError(
+        e instanceof Error && e.message
+          ? e.message
+          : "Couldn't check your answer. Try again.",
+      );
+    } finally {
+      setChecking(false);
+    }
+  };
   const ready = given.trim() !== "" && !Number.isNaN(Number(given));
   return (
     <article className="problem-card">
@@ -344,10 +369,10 @@ function ProblemCard({
         <div className="step-controls">
           <button
             className="btn btn-primary"
-            disabled={!ready}
-            onClick={() => setRes(onSubmit(given, hint))}
+            disabled={!ready || checking}
+            onClick={() => void check()}
           >
-            <Send size={14} /> Check answer
+            <Send size={14} /> {checking ? "Checking…" : "Check answer"}
           </button>
           {!hint && (
             <button className="btn btn-secondary" onClick={() => setHint(true)}>
@@ -356,11 +381,16 @@ function ProblemCard({
           )}
         </div>
       )}
+      {error && (
+        <p className="auth-msg error" role="alert">
+          {error}
+        </p>
+      )}
       {res && (
         <div className={`feedback-box ${res.correct ? "fb-ok" : "fb-bad"}`}>
           <strong>{res.correct ? "Correct" : "Not quite"}</strong>
           {!res.correct && <p>Likely misconception: {res.misconception}</p>}
-          <p>{p.explain}</p>
+          <p>{res.explain}</p>
           {!res.correct && (
             <button
               className="btn btn-secondary"

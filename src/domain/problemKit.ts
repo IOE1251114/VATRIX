@@ -16,6 +16,30 @@ export interface Problem {
   explain: string;
 }
 
+/** What the website may show before an answer is checked: no answer, no explanation, no answer-specific labels. */
+export type PublicProblem = Pick<
+  Problem,
+  "id" | "topic" | "kind" | "prompt" | "options" | "hint" | "tag"
+>;
+
+export const toPublic = (p: Problem): PublicProblem => ({
+  id: p.id,
+  topic: p.topic,
+  kind: p.kind,
+  prompt: p.prompt,
+  ...(p.options ? { options: p.options } : {}),
+  hint: p.hint,
+  tag: p.tag,
+});
+
+/** The result of checking one answer. `at` is when it was recorded (ms since 1970). */
+export type Graded = {
+  correct: boolean;
+  misconception?: string;
+  explain: string;
+  at: number;
+};
+
 export const mcq = (
   id: string,
   topic: string,

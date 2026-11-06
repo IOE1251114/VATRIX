@@ -108,6 +108,20 @@ export function LabPage({ course }: { course: Course }) {
     accounts &&
     (auth.loading || (!!auth.user && !auth.profile && !auth.profileError));
   const accountError = accounts && !!auth.user && !!auth.profileError;
+  // Teacher mode is only offered to teacher accounts (or to everyone when there are no accounts).
+  const canTeach = !accounts || role === "teacher";
+
+  // A signed-in student who opens a teacher link lands on their own practice instead.
+  useEffect(() => {
+    if (
+      accounts &&
+      auth.user &&
+      auth.profile &&
+      !canTeach &&
+      mode === "teacher"
+    )
+      setMode("student");
+  }, [accounts, auth.user, auth.profile, canTeach, mode]);
   const signInLink = (m: Mode) =>
     `/signin?next=${encodeURIComponent(`${window.location.pathname}?mode=${m}`)}`;
 
@@ -419,13 +433,15 @@ export function LabPage({ course }: { course: Course }) {
               >
                 <GraduationCap size={14} /> Student
               </button>
-              <button
-                className={mode === "teacher" ? "selected" : ""}
-                aria-pressed={mode === "teacher"}
-                onClick={() => setMode("teacher")}
-              >
-                <BookOpen size={14} /> Teacher
-              </button>
+              {canTeach && (
+                <button
+                  className={mode === "teacher" ? "selected" : ""}
+                  aria-pressed={mode === "teacher"}
+                  onClick={() => setMode("teacher")}
+                >
+                  <BookOpen size={14} /> Teacher
+                </button>
+              )}
             </div>
           </div>
         </header>
@@ -584,7 +600,11 @@ export function LabPage({ course }: { course: Course }) {
                 onLogin={login}
                 onLogout={accounts ? () => void auth.signOut() : logout}
                 logoutLabel={accounts ? "Sign out" : undefined}
-                onAttempt={(a) => updateDB((d) => withAttempt(d, studentId, a))}
+                onAttempt={(a, saved) =>
+                  updateDB((d) => withAttempt(d, studentId, a), {
+                    upload: !saved,
+                  })
+                }
                 onOpenVisualizer={openVisualizer}
               />
             ))}

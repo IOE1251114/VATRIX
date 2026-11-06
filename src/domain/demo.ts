@@ -60,7 +60,7 @@ export function seedDemo(db: DB, topics: TopicRef[]): DB {
           problemId: p.id,
           topic: t.id,
           correct,
-          given: correct ? String(p.answer) : "?",
+          given: "(demo)",
           misconception: correct ? undefined : p.tag,
           hint: rand() < 0.2,
           at: Date.now() - rand() * week,

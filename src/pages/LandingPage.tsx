@@ -114,6 +114,10 @@ const steps = [
 
 export function LandingPage() {
   const auth = useAuth();
+  // Teacher links are only for teacher accounts (or everyone when there are no accounts).
+  const canTeach = !auth.enabled || auth.profile?.role === "teacher";
+  const signedOut = auth.enabled && !auth.user;
+  const teacherSignIn = `/signin?next=${encodeURIComponent("/algorithms?mode=teacher")}`;
   const { hash } = useLocation();
   const [courseId, setCourseId] = useState(courses[0].id);
   const course = courses.find((c) => c.id === courseId)!;
@@ -291,24 +295,32 @@ export function LandingPage() {
             <h2>One lab for learning, practice and teaching</h2>
           </div>
           <div className="mode-cards">
-            {modes.map(({ id, icon: Icon, title, text, cta }) => (
-              <Link
-                to={
-                  id === "explore" ? course.path : `${course.path}?mode=${id}`
-                }
-                className="mode-card"
-                key={id}
-              >
-                <div className="mode-icon">
-                  <Icon size={20} />
-                </div>
-                <h3>{title}</h3>
-                <p>{text}</p>
-                <span className="mode-cta">
-                  {cta} <ArrowRight size={13} />
-                </span>
-              </Link>
-            ))}
+            {modes
+              // Students don't see the Teacher card; signed-out visitors get a sign-in link instead.
+              .filter((m) => m.id !== "teacher" || canTeach || signedOut)
+              .map(({ id, icon: Icon, title, text, cta }) => (
+                <Link
+                  to={
+                    id === "explore"
+                      ? course.path
+                      : id === "teacher" && !canTeach
+                        ? teacherSignIn
+                        : `${course.path}?mode=${id}`
+                  }
+                  className="mode-card"
+                  key={id}
+                >
+                  <div className="mode-icon">
+                    <Icon size={20} />
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                  <span className="mode-cta">
+                    {id === "teacher" && !canTeach ? "Teachers: sign in" : cta}{" "}
+                    <ArrowRight size={13} />
+                  </span>
+                </Link>
+              ))}
           </div>
         </section>
 
@@ -345,12 +357,14 @@ export function LandingPage() {
             <Link to="/linear-algebra" className="btn btn-primary btn-lg">
               Linear Algebra lab <ArrowRight size={15} />
             </Link>
-            <Link
-              to="/algorithms?mode=teacher"
-              className="btn btn-secondary btn-lg"
-            >
-              <ListChecks size={15} /> Teacher dashboard
-            </Link>
+            {canTeach && (
+              <Link
+                to="/algorithms?mode=teacher"
+                className="btn btn-secondary btn-lg"
+              >
+                <ListChecks size={15} /> Teacher dashboard
+              </Link>
+            )}
           </div>
         </section>
       </main>
@@ -409,9 +423,11 @@ export function LandingPage() {
               <li>
                 <Link to="/algorithms?mode=student">Student practice</Link>
               </li>
-              <li>
-                <Link to="/algorithms?mode=teacher">Teacher dashboard</Link>
-              </li>
+              {canTeach && (
+                <li>
+                  <Link to="/algorithms?mode=teacher">Teacher dashboard</Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

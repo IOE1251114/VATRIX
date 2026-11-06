@@ -3,6 +3,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Generated answer key (contains every answer; see scripts/gen-problems.ts)
+supabase/answer-key.sql
+
 # Environment and deployment
 .env
 .env.*
