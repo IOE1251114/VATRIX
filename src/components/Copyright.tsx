@@ -4,7 +4,7 @@ import { site } from "../domain/site";
 export function Copyright() {
   return (
     <p className="copyright">
-      © {new Date().getFullYear()} {site.name} ({site.founders.join(" & ")}).
+      © {new Date().getFullYear()} {site.name} .
       All rights reserved. The text, visualizations and design of this site may
       not be copied, reproduced or redistributed without written permission.
     </p>
