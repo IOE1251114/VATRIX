@@ -52,7 +52,7 @@ Without a database, each browser keeps its own progress in localStorage. Connect
 
 1. In Vercel open the project → **Settings → Environment Variables**.
 2. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` with the same values (for Production and Preview).
-3. Redeploy (**Deployments → ⋯ → Redeploy**). Vite bakes these values in at build time, so a redeploy is required after any change.
+3. Redeploy (**Deployments → ⋯ → Redeploy**). Vite bakes these values in at build time, so a redeploy is required after any change. If either is missing, the production build stops with an error naming the missing variable, so a deployment can never fall back to saving in the browser (and shipping the answer key) by accident.
 
 ### 5. Turn on student and teacher accounts
 
