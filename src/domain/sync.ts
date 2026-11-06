@@ -177,17 +177,15 @@ export function diffDB(prev: DB, next: DB): Diff {
 /**
  * Combine what the database holds with what this browser recorded (for example while offline).
  * Real progress is never lost: extra local attempts are kept and activity totals take the larger
- * value. Demo students that are no longer in the database stay deleted.
+ * value. Students that exist only in this browser are dropped: the database is the only place
+ * student records are created (at sign-up), so a missing one was removed there — a demo class a
+ * teacher cleared, or the empty row of someone who became a teacher — and must stay removed.
  */
 export function mergeDB(cloud: DB, local: DB): DB {
   const students: Record<string, Student> = { ...cloud.students };
   for (const s of Object.values(local.students)) {
     const c = students[s.id];
-    if (!c) {
-      // A demo student missing from the database was removed by a teacher: don't bring it back.
-      if (!s.demo) students[s.id] = s;
-      continue;
-    }
+    if (!c) continue; // removed in the database: don't bring it back
     const activity = { ...c.activity };
     for (const [t, a] of Object.entries(s.activity)) {
       const ca = activity[t];

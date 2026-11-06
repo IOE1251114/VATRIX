@@ -109,11 +109,19 @@ create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.handle_new_user();
 
 -- Adding or removing a teacher email updates an existing account's role straight away.
+-- A new teacher's student row is removed if it has no answers, so the Teacher dashboard
+-- doesn't list teachers as students. A row with answers is kept, so no work is ever lost.
 create or replace function public.sync_teacher_role()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
   if tg_op = 'INSERT' then
     update public.profiles set role = 'teacher' where email = new.email;
+    delete from public.students s
+    using public.profiles p
+    where p.email = new.email
+      and s.id = p.id::text
+      and not s.demo
+      and not exists (select 1 from public.attempts a where a.student_id = s.id);
     return new;
   else
     update public.profiles set role = 'student' where email = old.email;
@@ -136,6 +144,18 @@ select u.id,
        case when exists (select 1 from public.teacher_emails t where t.email = lower(u.email)) then 'teacher' else 'student' end
 from auth.users u
 on conflict (id) do nothing;
+
+-- Teachers listed before this rule existed: give them the teacher role and remove their
+-- student rows that have no answers (rows with answers are kept).
+update public.profiles p set role = 'teacher'
+where p.role <> 'teacher' and exists (select 1 from public.teacher_emails t where t.email = p.email);
+
+delete from public.students s
+using public.profiles p
+where s.id = p.id::text
+  and p.role = 'teacher'
+  and not s.demo
+  and not exists (select 1 from public.attempts a where a.student_id = s.id);
 
 -- ---------- Answer key and server-side grading ----------
 

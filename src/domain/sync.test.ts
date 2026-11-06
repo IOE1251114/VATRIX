@@ -139,7 +139,7 @@ describe("rows ↔ DB", () => {
 });
 
 describe("mergeDB", () => {
-  it("keeps local-only progress and never loses cloud data", () => {
+  it("keeps local-only answers and activity, and never loses cloud data", () => {
     const cloud = withActivity(
       withAttempt(withStudent(empty(), "Asha"), "asha", attempt(1)),
       "asha",
@@ -154,10 +154,8 @@ describe("mergeDB", () => {
     const m = mergeDB(cloud, local);
     expect(m.students.asha.attempts.map((a) => a.at)).toEqual([1, 2]);
     expect(m.students.asha.activity.ram).toEqual({ seconds: 25, steps: 1 });
-    expect(m.students.kabir).toBeDefined();
     const up = diffDB(cloud, m);
     expect(up.attempts).toHaveLength(1);
-    expect(up.students.map((s) => s.id)).toEqual(["kabir"]);
   });
 });
 
@@ -192,7 +190,7 @@ describe("fetchAllRows", () => {
 });
 
 describe("mergeDB and demo students", () => {
-  it("does not bring back a demo class a teacher removed", () => {
+  it("does not bring back students removed in the database", () => {
     const local = withStudent(
       withStudent(empty(), "Real one"),
       "Aarav (demo)",
@@ -202,5 +200,13 @@ describe("mergeDB and demo students", () => {
     const m = mergeDB(cloud, local);
     expect(Object.keys(m.students)).toEqual(["real-one"]);
     expect(diffDB(cloud, m).students).toHaveLength(0);
+    // A new teacher's empty student row, still in their browser copy, stays deleted too.
+    const teacherCache = withStudent(
+      empty(),
+      "Ayaan Mittal",
+      false,
+      "0121ef66",
+    );
+    expect(mergeDB(empty(), teacherCache).students).toEqual({});
   });
 });

@@ -71,7 +71,7 @@ With Supabase connected, practising (Student mode) and the Teacher dashboard nee
    insert into public.teacher_emails (email) values ('you@example.com');
    ```
 
-   This works before or after they sign up; their role changes at once (they may need to sign in again). Delete the row to turn a teacher back into a student.
+   This works before or after they sign up; their role changes at once (they should sign out and in again). If they had signed up as a student, their student row is removed so the Teacher dashboard doesn't list them — unless it already has answers, which are kept. Delete the row to turn a teacher back into a student.
 5. Open `/signin` on the site, create your account and sign in. The lab sidebar shows your name, your role and a Sign out button.
 
 ### 6. Load the answer key (server-side grading)
