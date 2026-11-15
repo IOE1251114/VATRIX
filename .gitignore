@@ -5,7 +5,6 @@ dist/
 
 # One-time question import (contains every answer; keep a private copy, never commit it)
 supabase/seed-problems.sql
-supabase/answer-key.sql
 
 # Environment and deployment
 .env
