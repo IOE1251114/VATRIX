@@ -244,17 +244,8 @@ describe("Unit V — bilinear and quadratic forms", () => {
   });
 });
 
-describe("Linear Algebra course data", () => {
-  it("gives every topic at least two problems with unique ids", async () => {
-    const { laUnits } = await import("./units");
-    const { laProblems } = await import("./problems");
-    for (const t of laUnits.flatMap((u) => u.topics))
-      expect(
-        laProblems.filter((p) => p.topic === t.id).length,
-      ).toBeGreaterThanOrEqual(2);
-    expect(new Set(laProblems.map((p) => p.id)).size).toBe(laProblems.length);
-  });
-  it("agrees with its numeric answers", () => {
+describe("Linear Algebra values used in practice", () => {
+  it("computes the values its practice questions rely on", () => {
     expect(
       inverse([
         [2, 1],

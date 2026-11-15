@@ -22,6 +22,7 @@ import {
 import logo from "../assets/logo.png";
 import { useAuth } from "../lib/auth";
 import { Copyright } from "../components/Copyright";
+import { useProblems } from "../domain/problems";
 import { StudentPanel } from "../components/modes/StudentPanel";
 import { TeacherDashboard } from "../components/modes/TeacherDashboard";
 import { subjects } from "../domain/subjects";
@@ -88,6 +89,8 @@ export function LabPage({ course }: { course: Course }) {
     accounts ? (auth.user?.id ?? null) : undefined,
   );
   const [studentName, setStudentName] = useState(readStudentName);
+  // Practice questions live in the database and need a signed-in user.
+  const questions = useProblems(accounts ? (auth.user?.id ?? null) : null);
 
   const unit = units.find((u) => u.id === activeUnit)!;
   const topic = allTopics.find((t) => t.id === activeTopic) ?? unit.topics[0];
@@ -533,11 +536,17 @@ export function LabPage({ course }: { course: Course }) {
                 db={db}
                 update={updateDB}
                 topics={topicRefs}
+                problems={questions.problems}
                 onOpenVisualizer={openVisualizer}
               />
             ))}
           {mode === "student" &&
-            (accounts && checkingAccount ? (
+            (!accounts ? (
+              <Gate
+                title="Practice needs the database"
+                text="The practice questions and their answers are stored in Supabase. Connect it (see the README) to practise; the visualizers work without it."
+              />
+            ) : checkingAccount ? (
               <Gate title="Checking your account…" text="One moment." />
             ) : accountError ? (
               <Gate
@@ -600,9 +609,11 @@ export function LabPage({ course }: { course: Course }) {
                 onLogin={login}
                 onLogout={accounts ? () => void auth.signOut() : logout}
                 logoutLabel={accounts ? "Sign out" : undefined}
-                onAttempt={(a, saved) =>
+                questions={questions}
+                onAttempt={(a) =>
+                  // The database recorded this attempt when it graded it: only cache it here.
                   updateDB((d) => withAttempt(d, studentId, a), {
-                    upload: !saved,
+                    upload: false,
                   })
                 }
                 onOpenVisualizer={openVisualizer}

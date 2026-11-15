@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import {
   checkAnswer,
-  problems,
-  problemsFor,
-  type PublicProblem,
+  problemsIn,
+  type Problem,
+  type ProblemsState,
 } from "../../domain/problems";
 import {
   statusLabel,
@@ -35,8 +35,10 @@ interface Props {
   onLogout: () => void;
   /** Label for the logout button ("Switch student" by default). */
   logoutLabel?: string;
-  /** `saved`: the database already recorded this attempt (it graded it), so don't upload it again. */
-  onAttempt: (a: Attempt, saved: boolean) => void;
+  /** The practice questions (loaded from the database). */
+  questions: ProblemsState;
+  /** Called with each graded attempt. The database has already recorded it. */
+  onAttempt: (a: Attempt) => void;
   onOpenVisualizer: (topicId: string) => void;
 }
 type Result = { correct: boolean; misconception?: string; explain: string };
@@ -49,6 +51,7 @@ export function StudentPanel({
   onLogin,
   onLogout,
   logoutLabel = "Switch student",
+  questions,
   onAttempt,
   onOpenVisualizer,
 }: Props) {
@@ -98,31 +101,28 @@ export function StudentPanel({
   const solved = (id: string) =>
     student.attempts.some((a) => a.problemId === id && a.correct);
   const assignment = db.assignments.find((a) => a.id === assignmentId);
-  const list: PublicProblem[] = assignment
+  const list: Problem[] = assignment
     ? assignment.problemIds
-        .map((id) => problems.find((p) => p.id === id))
-        .filter((p): p is PublicProblem => !!p)
-    : problemsFor(topic);
+        .map((id) => questions.problems.find((p) => p.id === id))
+        .filter((p): p is Problem => !!p)
+    : problemsIn(questions.problems, topic);
   const weak = weakTopics(student, topics);
 
   const submit = async (
-    p: PublicProblem,
+    p: Problem,
     given: string,
     hint: boolean,
   ): Promise<Result> => {
     const r = await checkAnswer(p.id, given, hint);
-    onAttempt(
-      {
-        problemId: p.id,
-        topic: p.topic,
-        correct: r.correct,
-        given: given.trim(),
-        misconception: r.misconception,
-        hint,
-        at: r.at,
-      },
-      r.saved,
-    );
+    onAttempt({
+      problemId: p.id,
+      topic: p.topic,
+      correct: r.correct,
+      given: given.trim(),
+      misconception: r.misconception,
+      hint,
+      at: r.at,
+    });
     return r;
   };
 
@@ -270,7 +270,18 @@ export function StudentPanel({
             </select>
           </label>
         )}
-        {list.length ? (
+        {questions.loading ? (
+          <div className="empty-state">
+            <p>Loading questions…</p>
+          </div>
+        ) : questions.error ? (
+          <div className="empty-state">
+            <p>{questions.error}</p>
+            <button className="btn btn-secondary" onClick={questions.reload}>
+              Try again
+            </button>
+          </div>
+        ) : list.length ? (
           list.map((p) => (
             <ProblemCard
               key={p.id}
@@ -297,7 +308,7 @@ function ProblemCard({
   solved,
   onSubmit,
 }: {
-  p: PublicProblem;
+  p: Problem;
   solved: boolean;
   onSubmit: (given: string, hint: boolean) => Promise<Result>;
 }) {

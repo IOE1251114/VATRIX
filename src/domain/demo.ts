@@ -1,4 +1,4 @@
-import { problemsFor } from "./problems";
+import { problemsIn, type Problem } from "./problems";
 import {
   withActivity,
   withAttempt,
@@ -30,7 +30,7 @@ function rng(seed: number) {
 }
 
 /** Synthetic students for trying out the teacher dashboard. Flagged demo:true so they can be removed. */
-export function seedDemo(db: DB, topics: TopicRef[]): DB {
+export function seedDemo(db: DB, topics: TopicRef[], problems: Problem[]): DB {
   const rand = rng(42);
   const week = 7 * 24 * 3600 * 1000;
   let out = db;
@@ -43,7 +43,7 @@ export function seedDemo(db: DB, topics: TopicRef[]): DB {
       .replace(/^-|-$/g, "");
     const base = 0.55 + rand() * 0.4;
     for (const t of topics) {
-      const pool = problemsFor(t.id);
+      const pool = problemsIn(problems, t.id);
       if (!pool.length) continue;
       const skill = Math.min(
         0.97,

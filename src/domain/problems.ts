@@ -1,71 +1,164 @@
-/* The practice questions as the website sees them — prompts, options and hints, never answers.
- * They come from questions.json, generated from the problem bank by `npm run gen:problems`.
+/* Practice questions, loaded from the Supabase table `problems`.
  *
- * Checking an answer:
- *   • With Supabase configured, the answer is sent to the database function submit_attempt,
- *     which grades it against the hidden answer key and records the attempt. The answers are
- *     not part of the website at all (the build drops the branch below that would load them).
- *   • Without Supabase (browser-only mode), the answer key is loaded on demand and checked here. */
-import questions from "./questions.json";
-import type { Graded, PublicProblem } from "./problemKit";
+ * The website only ever reads the question columns (prompt, options, hint, default
+ * misconception). Answers, answer-specific misconceptions and explanations stay in the database:
+ * an answer is sent to the database function submit_attempt, which grades it, records the
+ * attempt and returns the result with the explanation. Teachers add, edit and delete questions
+ * in the Supabase dashboard (Table Editor → problems). */
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { fetchAllRows } from "./sync";
 
-export type { Graded, PublicProblem } from "./problemKit";
+/** A practice question as the website sees it: never the answer. */
+export type Problem = {
+  id: string;
+  topic: string;
+  kind: "mcq" | "num";
+  prompt: string;
+  /** mcq only: the choices, in order. */
+  options?: string[];
+  hint: string;
+  /** Misconception recorded for a wrong answer when no specific one applies. */
+  tag: string;
+};
 
-/** Every subject's practice questions. Topic ids are unique across subjects. */
-export const problems = questions as PublicProblem[];
+/** The result of checking one answer. `at` is when the database recorded it (ms since 1970). */
+export type Graded = {
+  correct: boolean;
+  misconception?: string;
+  explain: string;
+  at: number;
+};
 
-export const problemsFor = (topic: string) =>
-  problems.filter((p) => p.topic === topic);
+/** The only columns the website may read (the database refuses the others). */
+const COLUMNS = "id, topic, sort_order, kind, prompt, options, hint, tag";
 
-/** True when the build has Supabase settings. Written as a literal check so the bundler can
- *  delete the browser-only branch (and with it the whole answer key) from cloud builds. */
-const CLOUD = !!(
-  import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+export type ProblemRow = {
+  id: string;
+  topic: string;
+  sort_order: number;
+  kind: string;
+  prompt: string;
+  options: string[] | null;
+  hint: string | null;
+  tag: string;
+};
+
+/** Turn a database row into a question, or null if it can't be shown (bad kind or options). */
+export function toProblem(r: ProblemRow): Problem | null {
+  if (r.kind !== "mcq" && r.kind !== "num") return null;
+  if (r.kind === "mcq" && !(r.options && r.options.length >= 2)) return null;
+  return {
+    id: r.id,
+    topic: r.topic,
+    kind: r.kind,
+    prompt: r.prompt,
+    ...(r.kind === "mcq" ? { options: r.options! } : {}),
+    hint: r.hint ?? "",
+    tag: r.tag,
+  };
+}
+
+/** Every question, ordered by topic and position. Needs a signed-in user. */
+export async function fetchProblems(): Promise<Problem[]> {
+  if (!supabase) return [];
+  const db = supabase;
+  const rows = await fetchAllRows<ProblemRow>((from, to) =>
+    db
+      .from("problems")
+      .select(COLUMNS)
+      .order("topic")
+      .order("sort_order")
+      .order("id")
+      .range(from, to),
+  );
+  return rows.map(toProblem).filter((p): p is Problem => p !== null);
+}
+
+export const problemsIn = (list: Problem[], topic: string) =>
+  list.filter((p) => p.topic === topic);
+
+export type ProblemsState = {
+  problems: Problem[];
+  loading: boolean;
+  error: string | null;
+  reload: () => void;
+};
 
 /**
- * Check one answer. In cloud mode the database also records the attempt (`saved: true`), so the
- * caller must not upload it again; in browser-only mode the caller records it (`saved: false`).
- * Throws with a readable message when the answer could not be checked (e.g. offline).
+ * Load the questions for the signed-in user (`owner` is their id; null = signed out, nothing is
+ * loaded). Reloads when the account changes or `reload()` is called, so a teacher's edits in the
+ * dashboard appear after a reload.
+ */
+export function useProblems(owner: string | null): ProblemsState {
+  const [problems, setProblems] = useState<Problem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const reload = useCallback(() => setAttempt((n) => n + 1), []);
+
+  useEffect(() => {
+    setProblems([]);
+    setError(null);
+    if (!supabase || !owner) {
+      setLoading(false);
+      return;
+    }
+    let alive = true;
+    setLoading(true);
+    fetchProblems().then(
+      (list) => {
+        if (!alive) return;
+        setProblems(list);
+        setLoading(false);
+      },
+      () => {
+        if (!alive) return;
+        setError(
+          "Couldn't load the practice questions. Check your connection and try again.",
+        );
+        setLoading(false);
+      },
+    );
+    return () => {
+      alive = false;
+    };
+  }, [owner, attempt]);
+
+  return { problems, loading, error, reload };
+}
+
+/**
+ * Check one answer. The database grades it against the hidden answer, records the attempt for the
+ * signed-in student and returns the result (never the answer). Throws a readable message on failure.
  */
 export async function checkAnswer(
   problemId: string,
   given: string,
   hint: boolean,
-): Promise<Graded & { saved: boolean }> {
-  if (CLOUD) {
-    const { data, error } = await supabase!.rpc("submit_attempt", {
-      p_problem_id: problemId,
-      p_given: given,
-      p_hint: hint,
-    });
-    if (error)
-      throw new Error(
-        error.message ||
-          "Couldn't check your answer. Check your connection and try again.",
-      );
-    const r = data as {
-      correct: boolean;
-      misconception: string | null;
-      explain: string;
-      at: string;
-    };
-    return {
-      correct: r.correct,
-      misconception: r.misconception ?? undefined,
-      explain: r.explain,
-      at: Date.parse(r.at),
-      saved: true,
-    };
-  }
-  const { answerKey, gradeAnswer } = await import("./answerKey");
-  const p = answerKey.find((x) => x.id === problemId);
-  if (!p) throw new Error(`Unknown problem ${problemId}.`);
+): Promise<Graded> {
+  if (!supabase)
+    throw new Error("Practice questions need the database to be connected.");
+  const { data, error } = await supabase.rpc("submit_attempt", {
+    p_problem_id: problemId,
+    p_given: given,
+    p_hint: hint,
+  });
+  if (error)
+    throw new Error(
+      error.message ||
+        "Couldn't check your answer. Check your connection and try again.",
+    );
+  const r = data as {
+    correct: boolean;
+    misconception: string | null;
+    explain: string;
+    at: string;
+  };
   return {
-    ...gradeAnswer(p, given),
-    explain: p.explain,
-    at: Date.now(),
-    saved: false,
+    correct: r.correct,
+    misconception: r.misconception ?? undefined,
+    explain: r.explain,
+    at: Date.parse(r.at),
   };
 }

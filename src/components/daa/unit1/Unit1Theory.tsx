@@ -29,158 +29,279 @@ export const Code = ({ children }: { children: string }) => (
 );
 
 const notes: Record<string, Note> = {
+  // RAM model notes revised by Abhishek Roy, following CLRS.
   ram: {
     syllabus: "Introduction to RAM model of computation",
     intro:
-      "To compare algorithms fairly we need a machine that is simple enough to reason about but close enough to real computers that the answers transfer. The Random Access Machine (RAM) is that agreed-upon machine. Every running-time statement in this course is a statement about it.",
+      "Algorithm analysis refers to predicting the computational resources required by an algorithm. Before analysing an algorithm we must fix a model of the implementation technology; CLRS primarily assumes a generic one-processor Random Access Machine (RAM).",
     cards: [
       {
         icon: "def",
-        title: "What the RAM model assumes",
-        body: (
-          <ul>
-            <li>
-              <b>One processor</b> executes instructions one after another, with
-              no parallelism.
-            </li>
-            <li>
-              <b>Memory</b> is an unbounded array of words. Any word can be read
-              or written by its address in constant time; this is why it is
-              called <i>random access</i>.
-            </li>
-            <li>
-              Every <b>primitive operation</b> costs one unit of time.
-            </li>
-            <li>
-              A word holds a number of about c·log n bits, enough to index the
-              input, so arithmetic on it is constant time.
-            </li>
-          </ul>
-        ),
-      },
-      {
-        icon: "key",
-        title: "Primitive operations (cost 1 each)",
-        body: (
-          <ul>
-            <li>Arithmetic: + − × ÷ mod, and floor/ceiling.</li>
-            <li>Comparison: &lt;, ≤, =, and so on.</li>
-            <li>Assignment, and reading or writing A[i].</li>
-            <li>Control: a branch, a function call or a return.</li>
-            <li>
-              <b>Not</b> primitive: “sort the array”, “find the maximum”.
-              Library calls cost whatever their own algorithm costs.
-            </li>
-          </ul>
-        ),
-      },
-      {
-        icon: "math",
-        title: "Running time on the RAM",
+        title: "1. Meaning of algorithm analysis",
         body: (
           <>
+            <p>The primary resources considered include:</p>
+            <ul>
+              <li>Computational time.</li>
+              <li>Memory space.</li>
+              <li>Communication bandwidth.</li>
+              <li>Computer hardware resources.</li>
+            </ul>
             <p>
-              Let the <b>input size n</b> be the natural measure of input: the
-              number of items for an array, the number of bits for a number, or
-              V and E for a graph. Then:
+              <b>Computational time</b> is generally the primary concern. The
+              purpose of analysing algorithms is to compare multiple candidate
+              solutions to the same problem, identify efficient approaches, and
+              eliminate inferior algorithms.
             </p>
-            <div className="u1-formula">
-              T(n) = Σ (cost of statement i) × (times statement i executes)
-            </div>
+          </>
+        ),
+      },
+      {
+        icon: "def",
+        title: "2. Need for a computational model",
+        body: (
+          <>
+            <p>A computational model defines:</p>
+            <ul>
+              <li>Available computational resources.</li>
+              <li>Permitted operations.</li>
+              <li>Cost associated with each operation.</li>
+              <li>Memory access assumptions.</li>
+            </ul>
             <p>
-              A loop header <code>for i ← 1 to n</code> executes <b>n + 1</b>{" "}
-              times: the last test fails and ends the loop.
+              This is necessary because execution time depends on the underlying
+              computer architecture and implementation technology. CLRS
+              primarily assumes a generic one-processor{" "}
+              <b>Random Access Machine (RAM)</b> model.
             </p>
           </>
         ),
       },
       {
         icon: "key",
-        title: "Best, worst and average case",
+        title: "3. The Random Access Machine (RAM) model",
         body: (
-          <ul>
-            <li>
-              <b>Worst case:</b> the maximum T over all inputs of size n. It is
-              a guarantee, and the usual choice.
-            </li>
-            <li>
-              <b>Best case:</b> the minimum T. It is rarely useful on its own.
-            </li>
-            <li>
-              <b>Average case:</b> the expected T under an assumed distribution
-              of inputs.
-            </li>
-            <li>
-              Linear search for a key that is present and equally likely at
-              every position: best 1, worst n, average (n + 1)/2 comparisons.
-            </li>
-          </ul>
+          <>
+            <p>
+              The RAM model is an abstract computational model used for
+              analysing algorithms. Its fundamental assumptions are:
+            </p>
+            <p>
+              <b>A. Single processor</b>
+            </p>
+            <ul>
+              <li>The machine contains one processor.</li>
+              <li>Instructions execute sequentially.</li>
+              <li>No concurrent or parallel operations are assumed.</li>
+            </ul>
+            <p>
+              <b>B. Random access memory</b>
+            </p>
+            <ul>
+              <li>Any memory location can be accessed directly.</li>
+              <li>
+                Accessing a specified memory location is assumed to take
+                constant time.
+              </li>
+              <li>
+                Access time does not depend on the location's position in
+                memory.
+              </li>
+            </ul>
+            <p>
+              <b>C. Sequential execution</b>
+            </p>
+            <ul>
+              <li>Instructions execute one after another.</li>
+              <li>
+                There is no simultaneous execution of multiple instructions.
+              </li>
+            </ul>
+          </>
         ),
       },
       {
-        icon: "example",
-        title: "Worked example: linear search",
-        wide: true,
+        icon: "key",
+        title: "4. Instruction set of the RAM model",
         body: (
-          <div className="u1-two-col">
-            <Code>{`LinearSearch(A, n, key)        cost   worst-case runs
-1  for i ← 1 to n               1      n + 1
-2      if A[i] = key            1      n
-3          return i             1      0
-4  return −1                    1      1`}</Code>
-            <div>
-              <p>
-                <b>Worst case</b> (key absent): T(n) = (n + 1) + n + 1 ={" "}
-                <b>2n + 2</b>, so Θ(n).
-              </p>
-              <p>
-                <b>Best case</b> (key at A[1]): one loop test, one comparison
-                and one return: T = <b>3</b>, so Θ(1).
-              </p>
-              <p>
-                The same algorithm has two different cost functions. That is why
-                “the complexity of linear search” must always say which case.
-              </p>
+          <>
+            <p>
+              The RAM model contains instructions commonly found in real
+              computers.
+            </p>
+            <ul>
+              <li>
+                <b>Arithmetic:</b> addition, subtraction, multiplication,
+                division, remainder, floor, ceiling.
+              </li>
+              <li>
+                <b>Data movement:</b> load, store, copy.
+              </li>
+              <li>
+                <b>Control:</b> conditional branch, unconditional branch,
+                subroutine call, subroutine return.
+              </li>
+            </ul>
+            <p>
+              <b>Fundamental assumption:</b> each permitted primitive
+              instruction takes a constant amount of time.
+            </p>
+            <div className="u1-formula">
+              T(single primitive instruction) = Θ(1)
             </div>
-          </div>
+            <p>
+              An algorithm's total execution time depends on the number of
+              primitive instructions it executes.
+            </p>
+          </>
+        ),
+      },
+      {
+        icon: "math",
+        title: "5. Data types and word size",
+        body: (
+          <>
+            <p>
+              The RAM model considers two principal data types: <b>integer</b>,
+              and <b>floating point</b> (for storing real numbers). It also
+              assumes a limit on the size of each data word. For an input of
+              size n, integers are typically represented using:
+            </p>
+            <div className="u1-formula">Word size = c lg n bits</div>
+            <p>
+              where n = input size, c = a constant with c ≥ 1, and lg n = log₂
+              n.
+            </p>
+            <p>
+              <b>Why must c ≥ 1?</b> The word must be large enough to represent
+              the value n and enable indexing of individual input elements.
+            </p>
+            <p>
+              <b>Why must c remain constant?</b> If word size could grow
+              arbitrarily, an arbitrarily large amount of information could be
+              stored and manipulated in a single word in constant time — an
+              unrealistic computational model. So word size is restricted to a
+              constant multiple of lg n.
+            </p>
+          </>
         ),
       },
       {
         icon: "mistake",
-        title: "Why use a model, and its limits",
+        title: "6. Gray areas in the RAM model",
         body: (
-          <ul>
-            <li>
-              Counts are <b>machine-independent</b>: a real computer runs each
-              primitive in at most some constant time, so real time ≈ constant ×
-              RAM count.
-            </li>
-            <li>
-              <b>Uniform cost</b> (each operation costs 1) is valid while
-              numbers fit in a word. For huge numbers, the{" "}
-              <b>logarithmic cost</b> criterion charges by the number of bits
-              instead.
-            </li>
-            <li>
-              The model ignores caches, virtual memory and parallel hardware.
-              Two Θ(n) programs can still differ in real speed.
-            </li>
-          </ul>
+          <>
+            <p>
+              Some instructions available in real computers are not explicitly
+              classified as constant-time operations. <b>Exponentiation</b> is
+              an example: computing x<sup>y</sup> for arbitrary real numbers
+              generally requires multiple instructions and is not constant time
+              in the general case.
+            </p>
+            <p>
+              Certain restricted operations can be constant time. Many computers
+              support a <b>bit-shift-left</b> instruction; shifting the binary
+              representation of the integer 1 by k positions gives:
+            </p>
+            <Code>{"1 << k = 2^k"}</Code>
+            <p>
+              This takes constant time provided k does not exceed the number of
+              bits in a word, so CLRS treats computing 2<sup>k</sup> as constant
+              time when k is a sufficiently small positive integer. The general
+              principle: avoid exploiting unusual machine-specific instructions
+              to obtain unrealistic complexity results.
+            </p>
+          </>
+        ),
+      },
+      {
+        icon: "mistake",
+        title: "7. Memory hierarchy and the RAM model",
+        body: (
+          <>
+            <p>
+              The basic RAM model does not attempt to represent the memory
+              hierarchy of contemporary computers. It ignores:
+            </p>
+            <ul>
+              <li>Cache memory.</li>
+              <li>Virtual memory.</li>
+              <li>
+                Differences in memory access costs caused by the memory
+                hierarchy.
+              </li>
+            </ul>
+            <p>
+              These factors can significantly affect the performance of real
+              programs, but including them makes models considerably more
+              complex. So most analyses in CLRS use the simpler RAM model.
+            </p>
+          </>
+        ),
+      },
+      {
+        icon: "math",
+        title: "8. Mathematical foundations of algorithm analysis",
+        body: (
+          <>
+            <p>
+              Even with a fixed computational model, analysing an algorithm can
+              be mathematically challenging. The tools required may include:
+            </p>
+            <ul>
+              <li>Combinatorics.</li>
+              <li>Probability theory.</li>
+              <li>Algebraic manipulation.</li>
+              <li>Identifying dominant terms in mathematical expressions.</li>
+            </ul>
+            <p>
+              An algorithm may behave differently for different inputs, so we
+              need mathematical methods to summarise its resource requirements
+              in simple expressions. The objective is an analysis that is easy
+              to express and manipulate, highlights the important
+              characteristics of resource requirements, and suppresses
+              insignificant details.
+            </p>
+          </>
         ),
       },
       {
         icon: "exam",
-        title: "Exam checklist",
+        title: "9. Fundamental takeaways",
+        wide: true,
         body: (
-          <ul>
+          <ol>
             <li>
-              State the assumptions: one processor, unit-cost primitives,
-              constant-time memory access.
+              Algorithm analysis predicts the resources required by an
+              algorithm.
             </li>
-            <li>Define the input size before counting anything.</li>
-            <li>Count executions of each line, not the number of lines.</li>
-            <li>Say which case you are analysing: best, worst or average.</li>
-          </ul>
+            <li>
+              The RAM model provides a standardised theoretical machine for
+              algorithm analysis.
+            </li>
+            <li>
+              The RAM model assumes one processor and sequential instruction
+              execution.
+            </li>
+            <li>
+              Primitive arithmetic, data movement, and control instructions take
+              constant time.
+            </li>
+            <li>
+              Memory locations are assumed to be directly accessible in constant
+              time.
+            </li>
+            <li>
+              Word size is restricted to c lg n bits, where c is a constant.
+            </li>
+            <li>
+              The model does not represent cache and virtual memory effects.
+            </li>
+            <li>
+              Mathematical analysis is necessary because algorithm behaviour
+              varies with input size and input characteristics.
+            </li>
+          </ol>
         ),
       },
     ],

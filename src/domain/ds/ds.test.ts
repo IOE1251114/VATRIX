@@ -348,18 +348,8 @@ describe("Unit V — sorting and graphs", () => {
   });
 });
 
-describe("Data Structures course data", () => {
-  it("gives every topic at least two practice problems and solvable mazes", async () => {
-    const { dsUnits } = await import("./units");
-    const { dsProblems } = await import("./problems");
-    const ids = dsUnits.flatMap((u) => u.topics.map((t) => t.id));
-    for (const id of ids)
-      expect(
-        dsProblems.filter((p) => p.topic === id).length,
-      ).toBeGreaterThanOrEqual(2);
-    expect(new Set(dsProblems.map((p) => p.id)).size).toBe(dsProblems.length);
-  });
-  it("answers its own numeric problems correctly", () => {
+describe("Data Structures values used in practice", () => {
+  it("computes the values its practice questions rely on", () => {
     expect(hanoiMoves(6).length).toBe(63);
     expect(fibTree(5).length).toBe(15);
     expect(

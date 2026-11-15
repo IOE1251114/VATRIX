@@ -17,7 +17,7 @@ import {
   Wand2,
 } from "lucide-react";
 import { seedDemo } from "../../domain/demo";
-import { problems, problemsFor } from "../../domain/problems";
+import { problemsIn, type Problem } from "../../domain/problems";
 import {
   classMastery,
   statusLabel,
@@ -54,6 +54,8 @@ interface Props {
   db: DB;
   update: UpdateDB;
   topics: TopicRef[];
+  /** The practice questions (loaded from the database). */
+  problems: Problem[];
   onOpenVisualizer: (topicId: string) => void;
 }
 
@@ -61,8 +63,10 @@ export function TeacherDashboard({
   db,
   update,
   topics,
+  problems,
   onOpenVisualizer,
 }: Props) {
+  const problemsFor = (topic: string) => problemsIn(problems, topic);
   const [selected, setSelected] = useState<string | null>(null);
   const [pick, setPick] = useState(topics[0].id);
   const students = Object.values(db.students);
@@ -130,7 +134,7 @@ export function TeacherDashboard({
           <div className="panel-actions-inline">
             <button
               className="btn btn-secondary"
-              onClick={() => update((d) => seedDemo(d, topics))}
+              onClick={() => update((d) => seedDemo(d, topics, problems))}
             >
               <Users size={14} /> Load demo class
             </button>

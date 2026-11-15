@@ -5,8 +5,8 @@ const REQUIRED = ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"];
 
 export default defineConfig(({ mode }) => {
   // Vercel's production build must be connected to Supabase. Without these values the site
-  // silently falls back to browser-only mode (progress saved in each browser) and the build
-  // includes the answer key — so stop the deployment with a clear message instead.
+  // silently falls back to browser-only mode (no accounts, no practice questions) — so stop
+  // the deployment with a clear message instead.
   if (process.env.VERCEL_ENV === "production") {
     const env = loadEnv(mode, process.cwd(), "VITE_");
     const missing = REQUIRED.filter((k) => !env[k]?.trim());
