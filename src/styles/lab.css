@@ -301,7 +301,7 @@
   border-radius: 9px;
   user-select: none;
 }
-.pz-edge line {
+.pz-edge path {
   stroke: #3a4d66;
   stroke-width: 2;
 }
@@ -312,19 +312,19 @@
 .pz-edge.clickable {
   cursor: pointer;
 }
-.pz-edge.clickable:hover line:not(.pz-hit) {
+.pz-edge.clickable:hover path:not(.pz-hit) {
   stroke: #7d9bbd;
 }
-.pz-edge.e-on line:not(.pz-hit) {
+.pz-edge.e-on path:not(.pz-hit) {
   stroke: #67d9ff;
   stroke-width: 4;
 }
-.pz-edge.e-hint line:not(.pz-hit) {
+.pz-edge.e-hint path:not(.pz-hit) {
   stroke: #f4c56a;
   stroke-width: 4;
   stroke-dasharray: 6 4;
 }
-.pz-edge.e-wrong line:not(.pz-hit) {
+.pz-edge.e-wrong path:not(.pz-hit) {
   stroke: #ff8b9a;
   stroke-width: 4;
 }
@@ -336,7 +336,9 @@
 .pz-node text,
 .pz-badge text {
   text-anchor: middle;
-  font: 600 11px "DM Mono", monospace;
+  font:
+    600 11px "DM Mono",
+    monospace;
   fill: #d3e2f1;
   pointer-events: none;
 }
@@ -344,7 +346,9 @@
   fill: #122033;
   stroke: #46607f;
   stroke-width: 2;
-  transition: fill 0.15s, stroke 0.15s;
+  transition:
+    fill 0.15s,
+    stroke 0.15s;
 }
 .pz-node.clickable {
   cursor: pointer;
@@ -379,7 +383,9 @@
   font-size: 9px;
 }
 .puzzle-sequence {
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #d3e2f1;
   margin: 6px 0;
   line-height: 1.6;
@@ -425,7 +431,9 @@
   transition: height 0.25s;
 }
 .pz-bar span {
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   color: #b6c6d7;
 }
 .pz-bar:not(:disabled):hover i {
@@ -578,7 +586,9 @@
 }
 .pz-peg b {
   margin-top: 6px;
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #8798ad;
 }
 .puzzle-plane {
@@ -605,7 +615,9 @@
   opacity: 0.6;
 }
 .pz-vlabel {
-  font: 600 13px "DM Mono", monospace;
+  font:
+    600 13px "DM Mono",
+    monospace;
 }
 .pz-hover {
   fill: none;
@@ -620,7 +632,9 @@
 }
 .puzzle-side {
   flex: 1 1 160px;
-  font: 11px "DM Mono", monospace;
+  font:
+    11px "DM Mono",
+    monospace;
   color: #d3e2f1;
 }
 .pz-matrix {
@@ -660,4 +674,248 @@
   padding: 0;
   color: #67d9ff;
   text-decoration: underline;
+}
+
+/* Text, steps and live status shown with a puzzle */
+.puzzle-lines {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  background: #08111c;
+  border: 1px solid #1f2d3f;
+  border-radius: 8px;
+  font:
+    11.5px/1.6 "DM Mono",
+    monospace;
+  color: #d3e2f1;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+.puzzle-step {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #1d3346;
+  color: #9fe6ff;
+  font:
+    600 11px "DM Mono",
+    monospace;
+}
+.puzzle-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+.puzzle-status span {
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #2f425a;
+  font:
+    11px "DM Mono",
+    monospace;
+  color: #d3e2f1;
+}
+.puzzle-status span.ok {
+  border-color: #2d6552;
+  background: #0e2a24;
+  color: #64e0b4;
+}
+.puzzle-status span.bad {
+  border-color: #70404c;
+  background: #241520;
+  color: #ff8b9a;
+}
+
+/* A row of boxes */
+.puzzle-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px;
+  background: #08111c;
+  border: 1px solid #1f2d3f;
+  border-radius: 9px;
+}
+.pz-box {
+  min-width: 44px;
+  padding: 8px 9px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #3a4d66;
+  border-radius: 7px;
+  background: #122033;
+  color: #e3eef9;
+}
+.pz-box b {
+  font:
+    600 13px "DM Mono",
+    monospace;
+  white-space: nowrap;
+}
+.pz-box small {
+  font:
+    9.5px "DM Mono",
+    monospace;
+  color: #8798ad;
+}
+.pz-box:not(:disabled):hover {
+  border-color: #9fe6ff;
+}
+.pz-box:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.pz-box.done {
+  opacity: 0.38;
+}
+.pz-box.later {
+  opacity: 0.45;
+  border-style: dashed;
+}
+.pz-box.fixed {
+  background: #12364a;
+  border-color: #67d9ff;
+}
+.pz-box.active {
+  border-color: #f4c56a;
+  box-shadow: 0 0 0 2px #f4c56a55;
+}
+.pz-box.chosen {
+  background: #1d5570;
+  border-color: #9fe6ff;
+}
+.pz-box.hint {
+  border: 2px dashed #f4c56a;
+}
+.pz-box.wrong {
+  background: #4a1d29;
+  border-color: #ff8b9a;
+}
+
+/* Adjacency-matrix grid */
+.puzzle-matrix-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.puzzle-matrix-wrap .puzzle-svg {
+  flex: 1 1 300px;
+  max-width: 420px;
+  margin: 0;
+}
+.puzzle-matrix {
+  border-collapse: separate;
+  border-spacing: 3px;
+  font:
+    11px "DM Mono",
+    monospace;
+  color: #8798ad;
+}
+.puzzle-matrix th {
+  font-weight: 600;
+  padding: 0 4px;
+}
+.pz-bit {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #2f425a;
+  border-radius: 6px;
+  background: #0d1724;
+  color: #60748c;
+  font:
+    600 12px "DM Mono",
+    monospace;
+}
+.pz-bit.on {
+  background: #1d5570;
+  border-color: #9fe6ff;
+  color: #e9fbff;
+}
+.pz-bit.answer {
+  outline: 2px dashed #64e0b4;
+  outline-offset: -3px;
+}
+.pz-bit:disabled {
+  opacity: 1;
+}
+
+/* Fill-in tables */
+.puzzle-table-wrap {
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.puzzle-table {
+  border-collapse: separate;
+  border-spacing: 3px;
+  font:
+    12px "DM Mono",
+    monospace;
+  color: #d3e2f1;
+}
+.puzzle-table th {
+  padding: 4px 8px;
+  color: #8798ad;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+.puzzle-table tbody th {
+  text-align: left;
+  white-space: pre;
+}
+.puzzle-table td {
+  min-width: 42px;
+  height: 34px;
+  text-align: center;
+  border-radius: 6px;
+  vertical-align: middle;
+}
+.puzzle-table td.given {
+  background: #122033;
+  border: 1px solid #2a3a50;
+}
+.puzzle-table td.blank {
+  padding: 0;
+  position: relative;
+}
+.puzzle-table td.blank input {
+  width: 58px;
+  height: 34px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid #4d8cae;
+  border-radius: 6px;
+  background: #0b1a29;
+  color: #e9fbff;
+  font:
+    600 12px "DM Mono",
+    monospace;
+}
+.puzzle-table td.blank input:focus {
+  outline: 2px solid #67d9ff;
+  outline-offset: 1px;
+}
+.puzzle-table td.blank.wrong input {
+  border-color: #ff8b9a;
+  background: #2a141c;
+  color: #ffb3bd;
+}
+.puzzle-table td.blank.right input {
+  border-color: #64e0b4;
+  background: #0e2a24;
+}
+.puzzle-table td.blank small {
+  display: block;
+  font-size: 9.5px;
+  color: #64e0b4;
+}
+.pz-axisname text {
+  font:
+    600 11px "DM Mono",
+    monospace;
+  fill: #8798ad;
 }

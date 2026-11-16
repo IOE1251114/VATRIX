@@ -103,9 +103,9 @@ Without Supabase connected there are no practice questions (the visualizers stil
 
 #### Puzzles (interactive questions)
 
-A `puzzle` question is a board the student plays: clicking vertices in BFS order, building a Hamiltonian cycle with backtracking, placing queens, walking a maze, moving the Tower of Hanoi, clicking a point on a vector grid, and so on. The row stores only the board's **settings**; the website draws a fresh random board every time (students can press **New board**), checks each move, explains the wrong ones, and records the result like any other answer — so puzzles count towards mastery and appear on the teacher dashboard.
+A `puzzle` question is a board the student plays: clicking vertices in BFS order, building a Hamiltonian cycle with backtracking, placing queens, walking a maze, moving the Tower of Hanoi, inserting keys into a hash table, filling in a DP table, choosing a satisfying assignment, clicking a point on a vector grid, and so on. Every topic on the site has at least one. The row stores only the board's **settings**; the website draws a fresh random board every time (students can press **New board**), checks each move, explains the wrong ones, and records the result like any other answer — so puzzles count towards mastery and appear on the teacher dashboard.
 
-**Load the starter puzzles (once):** after `schema.sql`, run `supabase/seed-puzzles.sql` the same way. It adds 29 puzzles across the three subjects (ids start with `pz-`). It contains no answers, so it is safe to commit; re-running it resets those rows and never deletes anything.
+**Load the starter puzzles (once):** after `schema.sql`, run `supabase/seed-puzzles.sql` the same way. It adds 92 puzzles — at least one for every topic — across the three subjects (ids start with `pz-`). It contains no answers, so it is safe to commit; re-running it resets those rows and never deletes anything.
 
 Settings for `puzzle` (`type` is required; the other numbers are optional, shown as *range (default)*):
 
@@ -126,6 +126,66 @@ Settings for `puzzle` (`type` is required; the other numbers are optional, shown
 | `transform` | Click where the matrix A sends p | `range` 4–8 (6) |
 | `eigenvector` | Click an eigenvector of A | `range` 4–8 (6) |
 | `projection` | Click the projection of p onto a line | `range` 4–8 (6) |
+| **Algorithms** | | |
+| `growth` | Click functions (or operations) from slowest- to fastest-growing | `count` 4–12 (6), `set`: `"functions"` or `"operations"` |
+| `op-count` | Fill in how often each line runs and the total cost (RAM model) | `program` 0–2, `n` 3–9 |
+| `loop-count` | Fill in how often a loop body runs for n = 4, 8, 16 | `program` 0–3 |
+| `counting-sort` | Fill in the count and running-total arrays | `max` 3–7 (5), `size` 5–12 (8) |
+| `heap` | Click the nodes a key swaps with when it sifts up or down | `heap`: `"max"`/`"min"`, `op`: `"insert"`/`"extract"`/`"either"`, `nodes` 5–14 (9) |
+| `hashing` | Click the slot each key lands in (open addressing) | `probe`: `"linear"`/`"quadratic"`, `size` 7/11/13 |
+| `string-match` | Select every position where the pattern starts | `length` 10–22 (16), `pattern` 2–5 (3) |
+| `adjacency-matrix` | Select the 1s of the graph's adjacency matrix | `nodes` 3–7 (5), `directed` true/false |
+| `components` | Select the (strongly) connected component of a vertex | `mode`: `"scc"`/`"cc"`, `nodes` 5–10 (8) |
+| `articulation` | Select the articulation points (or bridges) | `find`: `"points"`/`"bridges"`, `nodes` 5–10 (8) |
+| `fractional-knapsack` | Click items in the order greedy takes them | `items` 3–7 (5) |
+| `huffman` | Click the two lightest trees each round | `symbols` 3–8 (6) |
+| `pascal` | Fill in missing entries of Pascal's triangle | `rows` 4–10 (7), `blanks` 2–12 (6) |
+| `matrix-chain` | Fill in the m[i][j] table | `matrices` 3–5 (4) |
+| `lcs` | Fill in the last rows of the LCS table | `length` 3–6 (5) |
+| `knapsack` | Fill in the last row of the 0/1 knapsack table | `items` 2–4 (3), `capacity` 4–8 (6) |
+| `subset-sum` | Select numbers adding up to a target | `numbers` 4–9 (7) |
+| `np-graph` | Select an independent set, clique or vertex cover | `problem`: `"independent-set"`/`"clique"`/`"vertex-cover"`, `nodes` 5–9 (7) |
+| `reduction` | Turn a given independent set into a vertex cover | `nodes` 5–9 (7) |
+| `sat` | Choose true variables so every clause holds | `variables` 3–6 (4), `clauses` 3–8 (5) |
+| `tsp` | Build the shortest tour | `cities` 4–6 (5) |
+| **Data structures** | | |
+| `address` | Fill in element addresses | `order`: `"row"`/`"column"`, `rows` 2–8 (4), `cols` 2–8 (5) |
+| `array-shift` | Click elements in the order they shift | `op`: `"insert"`/`"delete"`/`"either"`, `size` 4–10 (7) |
+| `binary-search` | Click each element binary search compares with | `size` 6–16 (13) |
+| `sparse-transpose` | Fill in the triplets of the transpose | `rows` 3–6, `cols` 3–6, `terms` 3–7 |
+| `recursion-tree` | Click calls of fib(n) in the order they start | `n` 3–5 |
+| `linked-list` | Follow next pointers through memory | `nodes` 4–9 (6), `free` 0–4 (2) |
+| `polynomial` | Fill in the coefficients of p + q or p · q | `op`: `"add"`/`"multiply"`, `degree` 1–3 (2) |
+| `stack-queue` | Click the value each pop / dequeue removes | `kind`: `"stack"`/`"queue"`, `pushes` 4–9 (6) |
+| `postfix` | Click infix tokens in postfix order | `operators` 2–6 (4) |
+| `general-tree` | Click a general tree's nodes in pre- or postorder | `order`: `"preorder"`/`"postorder"`, `nodes` 5–12 (9) |
+| `trie` | Click the path of a word in a trie | `words` 3–9 (6) |
+| `merge` | Click values in the order merging writes them | `size` 4–12 (8) |
+| `radix-pass` | Click numbers in order after one stable ones-digit pass | `size` 5–10 (8) |
+| `degrees` | Fill in in- and out-degrees of a multigraph | `nodes` 3–6 (4), `edges` (8) |
+| **Linear algebra** | | |
+| `zn-inverse` | Fill in multiplicative inverses mod n | `n` 5–12 |
+| `closure` | Click u + v and see whether the set is closed | `range` 5–8 (6) |
+| `cross-product` | Fill in u × v and the triple product | `range` 2–5 (3) |
+| `matrix-coords` | Fill in a matrix's coordinates in a non-standard basis | `range` 3–9 (5) |
+| `poly-coords` | Fill in coordinates in {1, (x − 1), (x − 1)²} | — |
+| `complex` | Click z · w (or z + w) on the complex plane | `op`: `"multiply"`/`"add"` |
+| `direct-sum` | Click the U-part of v in U ⊕ W | `range` 5–8 (6) |
+| `oblique-projection` | Click P(p) for a projection along a direction | `range` 5–8 (6) |
+| `rank-nullity` | Fill in rank and nullity | `rows` 2–4 (3), `cols` 3–5 (4) |
+| `inverse` | Fill in A⁻¹ | `size` 2–3 (2) |
+| `change-basis` | Fill in [T]_B = P⁻¹AP | — |
+| `dual-basis` | Fill in the dual basis functionals | — |
+| `det-trace` | Fill in trace and determinant | `size` 2–3 (3) |
+| `cayley` | Fill in p(λ) and A² via Cayley–Hamilton | — |
+| `diagonalize` | Fill in A = PDP⁻¹ | — |
+| `jordan` | Fill in the number of Jordan blocks of each size | `size` 3–8 (6) |
+| `norms` | Fill in ‖A‖₁, ‖A‖∞ and ‖A‖_F² | `size` 2–3 (3) |
+| `orthogonal` | Click a vector orthogonal to u | `range` 4–8 (6) |
+| `gram-schmidt` | Click the Gram–Schmidt vector u₂ | `range` 5–8 (6) |
+| `orthogonal-map` | Click Q · p for an orthogonal Q | `range` 4–8 (5) |
+| `bilinear` | Fill in the symmetric and skew-symmetric parts | — |
+| `quadratic` | Fill in the matrix of a quadratic form and its determinant | — |
 
 The board's own explanation is shown after each attempt, so leave `explain`, `answer`, `options` and `tags` empty. `hint` and `tag` work as for other questions. Note that puzzle moves are checked in the browser, so a determined student could fake a puzzle result; the theory questions remain graded by the database.
 
@@ -192,7 +252,7 @@ Data recorded before accounts existed (students identified only by a typed name)
 │   └── assets/                # Images bundled by Vite (logo)
 ├── supabase/schema.sql        # Tables, accounts/roles, grading function, security rules — run in Supabase
 ├── supabase/seed-problems.sql # Git-ignored, one-time import of the original 172 questions
-├── supabase/seed-puzzles.sql  # One-time import of the 29 starter puzzles (no answers inside)
+├── supabase/seed-puzzles.sql  # One-time import of the 92 starter puzzles (no answers inside)
 ├── .env.example               # Template for VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
 ├── vercel.json                # SPA rewrite so deep links work on refresh
 └── vite.config.ts
@@ -251,7 +311,7 @@ Follows the syllabus unit by unit (27 topics, 54 practice problems). Most visual
 ## Modes
 
 - **Explore:** interactive visualizers, input controls, intermediate states and concept notes. While a student is signed in, time spent and steps taken per topic are recorded automatically.
-- **Student (manual practice):** sign in with a student account see your mastery per topic, practice auto-graded problems from the `problems` table (172 to start with: 60 for Algorithms, 58 for Data Structures, 54 for Linear Algebra) plus 29 interactive puzzles that play the algorithm on a fresh board, use hints, and open the matching visualizer. Teacher assignments appear here.
+- **Student (manual practice):** sign in with a student account see your mastery per topic, practice auto-graded problems from the `problems` table (172 to start with: 60 for Algorithms, 58 for Data Structures, 54 for Linear Algebra) plus 92 interactive puzzles (at least one per topic) that play the algorithm on a fresh board, use hints, and open the matching visualizer. Teacher assignments appear here.
 - **Teacher (automated, teacher accounts only):** no grading or data entry. The dashboard derives class accuracy, weakest topics, most common misconceptions, students needing attention, a student × topic heatmap, per-student drill-down (time, steps, misconceptions), and one-click auto-assignment of the weakest topics. Export CSV/JSON.
 
 ## How tracking works

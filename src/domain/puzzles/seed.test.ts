@@ -35,4 +35,10 @@ describe("supabase/seed-puzzles.sql", () => {
         expect(makePuzzle(r.settings, s), `${r.id} seed ${s}`).not.toBeNull();
     }
   });
+
+  it("gives every topic on the site at least one puzzle", () => {
+    const withPuzzle = new Set(rows.map((r) => r.topic));
+    const missing = [...topics].filter((t) => !withPuzzle.has(t));
+    expect(missing).toEqual([]);
+  });
 });

@@ -11,15 +11,22 @@ import {
   hanoiStart,
   type Pegs,
 } from "../../domain/puzzles/dsPuzzles";
-import type {
-  CyclePuzzle,
-  GraphBoard,
-  HanoiPuzzle,
-  MazePuzzle,
-  OrderPuzzle,
-  PlanePuzzle,
-  QueensPuzzle,
-  Vec,
+import {
+  fmtNum,
+  gradeTable,
+  parseNum,
+  type CellMark,
+  type CyclePuzzle,
+  type GraphBoard,
+  type SelectPuzzle,
+  type StatusLine,
+  type TablePuzzle,
+  type HanoiPuzzle,
+  type MazePuzzle,
+  type OrderPuzzle,
+  type PlanePuzzle,
+  type QueensPuzzle,
+  type Vec,
 } from "../../domain/puzzles/core";
 
 export type PuzzleResult = {
@@ -198,7 +205,64 @@ function renderBoard(
       return <HanoiBoard key={key} pz={pz} {...common} />;
     case "plane":
       return <PlaneBoard key={key} pz={pz} {...common} />;
+    case "select":
+      return <SelectBoard key={key} pz={pz} {...common} />;
+    case "table":
+      return <TableBoard key={key} pz={pz} {...common} />;
   }
+}
+
+/** Fixed text above a board: code, the operations to run, the matrices involved. */
+function Lines({ lines }: { lines?: string[] }) {
+  if (!lines?.length) return null;
+  return <pre className="puzzle-lines">{lines.join("\n")}</pre>;
+}
+
+function Status({ lines }: { lines: StatusLine[] }) {
+  return (
+    <div className="puzzle-status" aria-live="polite">
+      {lines.map((l, i) => (
+        <span
+          key={i}
+          className={l.ok === true ? "ok" : l.ok === false ? "bad" : ""}
+        >
+          {l.text}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** A row of boxes (array slots, list nodes, tokens…). */
+function CellsRow({
+  values,
+  captions,
+  marks,
+  look,
+  onCell,
+}: {
+  values: string[];
+  captions?: string[];
+  marks?: Record<number, CellMark>;
+  look?: (i: number) => string;
+  onCell?: (i: number) => void;
+}) {
+  return (
+    <div className="puzzle-cells">
+      {values.map((v, i) => (
+        <button
+          key={i}
+          className={`pz-box ${marks?.[i] ?? ""} ${look?.(i) ?? ""}`}
+          disabled={!onCell}
+          onClick={onCell ? () => onCell(i) : undefined}
+          aria-label={`Box ${i}${v ? `: ${v}` : ", empty"}`}
+        >
+          <b>{v || "\u00a0"}</b>
+          {captions?.[i] !== undefined && <small>{captions[i]}</small>}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 // ---------- Graph drawing ----------
@@ -224,7 +288,11 @@ function GraphSvg({
   return (
     <svg
       className="puzzle-svg"
-      viewBox={`0 0 ${g.width} ${g.height}`}
+      viewBox={
+        g.edges.some((e) => e.a === e.b)
+          ? `-40 -40 ${g.width + 80} ${g.height + 80}`
+          : `0 0 ${g.width} ${g.height}`
+      }
       role="group"
       aria-label="Graph"
     >
@@ -244,30 +312,54 @@ function GraphSvg({
       {g.edges.map((e, i) => {
         const a = g.nodes[e.a],
           b = g.nodes[e.b];
-        const dx = b.x - a.x,
-          dy = b.y - a.y,
+        const st = edgeLook?.(i) ?? "idle";
+        const marker = g.directed ? "url(#pz-arrow)" : undefined;
+        const cls = `pz-edge e-${st} ${onEdge ? "clickable" : ""}`;
+        const click = onEdge ? () => onEdge(i) : undefined;
+        if (e.a === e.b) {
+          // a loop, drawn on the side of the vertex facing away from the middle of the board
+          const t = Math.atan2(a.y - g.height / 2, a.x - g.width / 2);
+          const ux = Math.cos(t),
+            uy = Math.sin(t),
+            vx = -uy,
+            vy = ux;
+          const pt = (k: number, m: number) =>
+            `${a.x + ux * k + vx * m} ${a.y + uy * k + vy * m}`;
+          const d = `M ${pt(R * 0.8, -R * 0.6)} C ${pt(R * 3.2, -R * 1.7)}, ${pt(R * 3.2, R * 1.7)}, ${pt(R + 3, R * 0.45)}`;
+          return (
+            <g key={i} className={cls} onClick={click}>
+              <path d={d} fill="none" markerEnd={marker} />
+            </g>
+          );
+        }
+        // parallel (or opposite) edges between the same two vertices bend apart
+        const same = g.edges
+          .map((x, k) => [x, k] as const)
+          .filter(
+            ([x]) =>
+              (x.a === e.a && x.b === e.b) || (x.a === e.b && x.b === e.a),
+          );
+        const k = same.findIndex(([, idx]) => idx === i);
+        const lo = e.a < e.b ? a : b,
+          hi = e.a < e.b ? b : a;
+        const nx = -(hi.y - lo.y),
+          ny = hi.x - lo.x,
+          nl = Math.hypot(nx, ny) || 1;
+        const off = (k - (same.length - 1) / 2) * 44;
+        const cx = (a.x + b.x) / 2 + (nx / nl) * off,
+          cy = (a.y + b.y) / 2 + (ny / nl) * off;
+        const dx = b.x - cx,
+          dy = b.y - cy,
           len = Math.hypot(dx, dy) || 1;
         const x2 = g.directed ? b.x - (dx / len) * (R + 3) : b.x;
         const y2 = g.directed ? b.y - (dy / len) * (R + 3) : b.y;
-        const st = edgeLook?.(i) ?? "idle";
-        const mx = (a.x + b.x) / 2,
-          my = (a.y + b.y) / 2;
+        const mx = (a.x + 2 * cx + b.x) / 4,
+          my = (a.y + 2 * cy + b.y) / 4;
+        const d = `M ${a.x} ${a.y} Q ${cx} ${cy} ${x2} ${y2}`;
         return (
-          <g
-            key={i}
-            className={`pz-edge e-${st} ${onEdge ? "clickable" : ""}`}
-            onClick={onEdge ? () => onEdge(i) : undefined}
-          >
-            {onEdge && (
-              <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} className="pz-hit" />
-            )}
-            <line
-              x1={a.x}
-              y1={a.y}
-              x2={x2}
-              y2={y2}
-              markerEnd={g.directed ? "url(#pz-arrow)" : undefined}
-            />
+          <g key={i} className={cls} onClick={click}>
+            {onEdge && <path d={d} fill="none" className="pz-hit" />}
+            <path d={d} fill="none" markerEnd={marker} />
             {e.w !== undefined && (
               <g className="pz-weight">
                 <rect x={mx - 11} y={my - 9} width={22} height={18} rx={5} />
@@ -341,18 +433,49 @@ function OrderBoard({ pz, done, hint, finish }: BoardProps<OrderPuzzle>) {
       {picks.length
         ? picks.map((x, k) => pz.name(x, picks.slice(0, k))).join(" → ")
         : "nothing yet"}
-      <small>
-        {" "}
-        ({Math.min(picks.length, pz.length)}/{pz.length})
-      </small>
+      {!pz.hideCount && (
+        <small>
+          {" "}
+          ({Math.min(picks.length, pz.length)}/{pz.length})
+        </small>
+      )}
     </div>
   );
+
+  const head = (
+    <>
+      <Lines lines={pz.lines} />
+      {pz.step && !done && <p className="puzzle-step">{pz.step(picks)}</p>}
+    </>
+  );
+
+  if (pz.board.kind === "cells") {
+    const st = pz.cells
+      ? pz.cells(picks)
+      : { values: pz.board.values, captions: pz.board.captions };
+    return (
+      <>
+        {head}
+        <CellsRow
+          values={st.values}
+          captions={st.captions ?? pz.board.captions}
+          marks={st.marks}
+          look={(i) =>
+            wrong === i ? "wrong" : hint && next === i && !done ? "hint" : ""
+          }
+          onCell={done ? undefined : click}
+        />
+        {sequence}
+      </>
+    );
+  }
 
   if (pz.board.kind === "bars") {
     const st = pz.bars ? pz.bars(picks) : { values: pz.board.values, fixed: 0 };
     const max = Math.max(...st.values);
     return (
       <>
+        {head}
         <div className="puzzle-bars">
           {st.values.map((v, i) => {
             const cls =
@@ -387,6 +510,7 @@ function OrderBoard({ pz, done, hint, finish }: BoardProps<OrderPuzzle>) {
   const order = new Map(picks.map((x, k) => [x, k + 1]));
   return (
     <>
+      {head}
       <GraphSvg
         g={g}
         look={(i) =>
@@ -441,6 +565,11 @@ function CycleBoard({ pz, done, hint, finish }: BoardProps<CyclePuzzle>) {
     g.edges.some((e) => (e.a === a && e.b === b) || (e.a === b && e.b === a));
   const last = path[path.length - 1];
   const L = (i: number) => g.nodes[i].label;
+  const weight = (a: number, b: number) =>
+    g.edges.find((e) => (e.a === a && e.b === b) || (e.a === b && e.b === a))
+      ?.w ?? 0;
+  const cost = (list: number[]) =>
+    list.slice(1).reduce((t, v, k) => t + weight(list[k], v), 0);
 
   // The hint follows the stored solution (either direction) while the path still matches it.
   const sol = pz.solution.slice(0, -1);
@@ -462,12 +591,20 @@ function CycleBoard({ pz, done, hint, finish }: BoardProps<CyclePuzzle>) {
       return;
     }
     if (i === pz.start) {
-      if (path.length === n)
-        finish({
-          correct: true,
-          given: [...path, i].map(L).join(" → "),
-        });
-      else setNote(`Visit all ${n} vertices before coming back to ${L(i)}.`);
+      if (path.length === n) {
+        const tour = [...path, i];
+        const total = cost(tour);
+        const given = `${tour.map(L).join(" → ")}${pz.best !== undefined ? ` (${total})` : ""}`;
+        finish(
+          pz.best !== undefined && total > pz.best
+            ? {
+                correct: false,
+                given,
+                misconception: `Found a tour of total ${total}, but a shorter one (${pz.best}) exists`,
+              }
+            : { correct: true, given },
+        );
+      } else setNote(`Visit all ${n} vertices before coming back to ${L(i)}.`);
       return;
     }
     if (path.includes(i)) {
@@ -516,7 +653,8 @@ function CycleBoard({ pz, done, hint, finish }: BoardProps<CyclePuzzle>) {
       <div className="puzzle-sequence" aria-live="polite">
         <span>Path:</span> {path.map(L).join(" → ")}{" "}
         <small>
-          ({path.length}/{n} · {backs} step{backs === 1 ? "" : "s"} back)
+          ({path.length}/{n} · {backs} step{backs === 1 ? "" : "s"} back
+          {pz.best !== undefined ? ` · length so far ${cost(path)}` : ""})
         </small>
       </div>
       {note && <p className="puzzle-note">{note}</p>}
@@ -898,6 +1036,29 @@ function PlaneBoard({ pz, done, hint, finish }: BoardProps<PlanePuzzle>) {
             />
           );
         })}
+        {(pz.offsetLines ?? []).map(({ p, d }, k) => {
+          const m = (4 * R) / Math.max(Math.abs(d[0]), Math.abs(d[1]), 1e-9);
+          return (
+            <line
+              key={`o${k}`}
+              className="pz-dirline"
+              x1={X(p[0] - d[0] * m)}
+              y1={Y(p[1] - d[1] * m)}
+              x2={X(p[0] + d[0] * m)}
+              y2={Y(p[1] + d[1] * m)}
+            />
+          );
+        })}
+        {pz.axes && (
+          <g className="pz-axisname">
+            <text x={X(R) - 4} y={Y(0) - 6} textAnchor="end">
+              {pz.axes[0]}
+            </text>
+            <text x={X(0) + 6} y={Y(R) + 12}>
+              {pz.axes[1]}
+            </text>
+          </g>
+        )}
         {pz.vectors.map((v) => arrow(v.v, TONE[v.tone], v.label))}
         {hint &&
           !done &&
@@ -964,5 +1125,284 @@ function PlaneBoard({ pz, done, hint, finish }: BoardProps<PlanePuzzle>) {
         </p>
       </div>
     </div>
+  );
+}
+
+// ---------- Choose a set ----------
+
+function SelectBoard({ pz, done, hint, finish }: BoardProps<SelectPuzzle>) {
+  const [chosen, setChosen] = useState<number[]>([]);
+  const toggle = (i: number) => {
+    if (done) return;
+    setChosen(
+      chosen.includes(i) ? chosen.filter((x) => x !== i) : [...chosen, i],
+    );
+  };
+  const b = pz.board;
+  const label = (i: number) =>
+    b.kind === "graph"
+      ? pz.pick === "edge"
+        ? `${b.nodes[b.edges[i].a].label}–${b.nodes[b.edges[i].b].label}`
+        : b.nodes[i].label
+      : b.kind === "grid"
+        ? `${b.rowHeads[Math.floor(i / b.cols)]}${b.colHeads[i % b.cols]}`
+        : b.values[i];
+  const check = () => {
+    const why = pz.check(chosen);
+    const given =
+      [...chosen]
+        .sort((x, y) => x - y)
+        .map(label)
+        .join(", ") || "nothing";
+    finish(
+      why
+        ? { correct: false, given, misconception: why }
+        : { correct: true, given },
+    );
+  };
+  // after a wrong answer, outline one correct choice
+  const showAnswer = done && pz.check(chosen) !== null;
+  const inAnswer = (i: number) => showAnswer && pz.answer.includes(i);
+  const isOn = (i: number) => chosen.includes(i);
+
+  let board: ReactNode;
+  if (b.kind === "graph") {
+    const marked = new Set(pz.marked ?? []);
+    board = (
+      <GraphSvg
+        g={b}
+        look={(i) =>
+          pz.pick === "node" && isOn(i)
+            ? "current"
+            : pz.pick === "node" && inAnswer(i)
+              ? "hint"
+              : marked.has(i)
+                ? "start"
+                : "idle"
+        }
+        edgeLook={
+          pz.pick === "edge"
+            ? (i) => (isOn(i) ? "on" : inAnswer(i) ? "hint" : "idle")
+            : undefined
+        }
+        onNode={pz.pick === "node" && !done ? toggle : undefined}
+        onEdge={pz.pick === "edge" && !done ? toggle : undefined}
+      />
+    );
+  } else if (b.kind === "grid") {
+    board = (
+      <div className="puzzle-matrix-wrap">
+        {pz.show && <GraphSvg g={pz.show} look={() => "idle"} />}
+        <table className="puzzle-matrix">
+          <thead>
+            <tr>
+              <th />
+              {b.colHeads.map((h) => (
+                <th key={h}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {b.rowHeads.map((rh, r) => (
+              <tr key={rh}>
+                <th>{rh}</th>
+                {b.colHeads.map((_, c) => {
+                  const i = r * b.cols + c;
+                  return (
+                    <td key={c}>
+                      <button
+                        className={`pz-bit ${isOn(i) ? "on" : ""} ${inAnswer(i) ? "answer" : ""}`}
+                        disabled={done}
+                        onClick={() => toggle(i)}
+                        aria-label={`Row ${rh}, column ${b.colHeads[c]}: ${isOn(i) ? 1 : 0}`}
+                      >
+                        {isOn(i) ? 1 : 0}
+                      </button>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  } else {
+    const marked = new Set(pz.marked ?? []);
+    board = (
+      <CellsRow
+        values={b.values}
+        captions={b.captions?.map((c, i) =>
+          c === "" ? (isOn(i) ? "true" : "false") : c,
+        )}
+        look={(i) =>
+          isOn(i)
+            ? "chosen"
+            : inAnswer(i)
+              ? "hint"
+              : marked.has(i)
+                ? "fixed"
+                : ""
+        }
+        onCell={done ? undefined : toggle}
+      />
+    );
+  }
+
+  return (
+    <>
+      <Lines lines={pz.lines} />
+      {board}
+      {pz.status && <Status lines={pz.status(chosen)} />}
+      <div className="puzzle-sequence">
+        <span>Chosen:</span>{" "}
+        {chosen.length
+          ? [...chosen]
+              .sort((x, y) => x - y)
+              .map(label)
+              .join(", ")
+          : "nothing yet"}
+        {hint && !done && <small> · click again to unselect</small>}
+      </div>
+      {showAnswer && (
+        <p className="puzzle-note">Dashed outlines show one correct answer.</p>
+      )}
+      {!done && (
+        <div className="step-controls">
+          <button className="btn btn-primary" onClick={check}>
+            <Check size={14} /> Check
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ---------- Fill in a table ----------
+
+function TableBoard({ pz, done, finish }: BoardProps<TablePuzzle>) {
+  const [text, setText] = useState<string[][]>(() =>
+    pz.cells.map((row) => row.map(() => "")),
+  );
+  const [wrong, setWrong] = useState<Vec[] | null>(null);
+  const blanks = pz.cells.flatMap((row, r) =>
+    row.flatMap((c, k) => (c === null ? [[r, k] as Vec] : [])),
+  );
+  const filled = blanks.every(([r, c]) => !Number.isNaN(parseNum(text[r][c])));
+  const check = () => {
+    const values = text.map((row) =>
+      row.map((t) => (t.trim() ? parseNum(t) : null)),
+    );
+    const res = gradeTable(pz, values);
+    setWrong(res.wrong);
+    const given = blanks
+      .map(([r, c]) => text[r][c].trim())
+      .join(" ")
+      .slice(0, 200);
+    finish(
+      res.wrong.length
+        ? {
+            correct: false,
+            given,
+            misconception:
+              res.why ??
+              `${res.wrong.length} of ${blanks.length} value${blanks.length === 1 ? " is" : "s are"} wrong`,
+          }
+        : { correct: true, given },
+    );
+  };
+  const shownWrong =
+    wrong ??
+    (done
+      ? gradeTable(
+          pz,
+          text.map((row) => row.map((t) => (t.trim() ? parseNum(t) : null))),
+        ).wrong
+      : null);
+  const isWrong = (r: number, c: number) =>
+    !!shownWrong?.some(([a, b]) => a === r && b === c);
+  return (
+    <>
+      <Lines lines={pz.lines} />
+      {pz.show && <GraphSvg g={pz.show} look={() => "idle"} />}
+      <div className="puzzle-table-wrap">
+        <table className="puzzle-table">
+          {pz.colHeads && (
+            <thead>
+              <tr>
+                {pz.rowHeads && <th>{pz.corner ?? ""}</th>}
+                {pz.colHeads.map((h, i) => (
+                  <th key={i}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {pz.cells.map((row, r) => (
+              <tr key={r}>
+                {pz.rowHeads && <th>{pz.rowHeads[r]}</th>}
+                {row.map((cell, c) =>
+                  cell !== null ? (
+                    <td key={c} className={cell === "" ? "empty" : "given"}>
+                      {cell}
+                    </td>
+                  ) : (
+                    <td
+                      key={c}
+                      className={`blank ${isWrong(r, c) ? "wrong" : wrong ? "right" : ""}`}
+                    >
+                      <input
+                        inputMode="decimal"
+                        aria-label={`${pz.rowHeads?.[r] ?? `row ${r + 1}`}, ${pz.colHeads?.[c] ?? `column ${c + 1}`}`}
+                        value={text[r][c]}
+                        disabled={done}
+                        onChange={(e) =>
+                          setText(
+                            text.map((rw, i) =>
+                              i === r
+                                ? rw.map((t, j) =>
+                                    j === c ? e.target.value : t,
+                                  )
+                                : rw,
+                            ),
+                          )
+                        }
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && filled && !done && check()
+                        }
+                      />
+                      {done && isWrong(r, c) && (
+                        <small>{fmtNum(pz.answers[r][c]!)}</small>
+                      )}
+                    </td>
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="puzzle-sequence">
+        <span>Filled:</span>{" "}
+        {blanks.filter(([r, c]) => text[r][c].trim()).length}/{blanks.length}
+        <small> · whole numbers, decimals or fractions like 3/4</small>
+      </div>
+      {done && shownWrong?.length ? (
+        <p className="puzzle-note">
+          Red cells were wrong; the small number underneath is the right value.
+        </p>
+      ) : null}
+      {!done && (
+        <div className="step-controls">
+          <button
+            className="btn btn-primary"
+            disabled={!filled}
+            onClick={check}
+          >
+            <Check size={14} /> Check table
+          </button>
+        </div>
+      )}
+    </>
   );
 }
