@@ -87,18 +87,47 @@ All practice questions — prompts, options, hints, answers and explanations —
 | `id` | A unique name, e.g. `ram-3` (lower-case letters, digits, hyphens) |
 | `topic` | The topic it belongs to — the `?topic=` part of the topic's address, e.g. `ram`, `ds-stack`, `la-eigen` |
 | `sort_order` | Position within the topic (smaller comes first) |
-| `kind` | `mcq` (pick an option) or `num` (type a number) |
+| `kind` | `mcq` (pick an option), `num` (type a number) or `puzzle` (an interactive board — see below) |
 | `prompt` | The question |
-| `options` | `mcq` only: the choices, e.g. `{"First","Second","Third"}`. Empty for `num` |
+| `options` | `mcq` only: the choices, e.g. `{"First","Second","Third"}`. Empty otherwise |
+| `puzzle` | `puzzle` only: the board's settings, e.g. `{"type": "bfs", "nodes": 7}` |
 | `hint` | Shown when the student asks for a hint |
 | `tag` | The misconception recorded for a wrong answer |
-| `answer` | Hidden. `num`: the correct number. `mcq`: the position of the correct option, counting from 0 |
+| `answer` | Hidden. `num`: the correct number. `mcq`: the position of the correct option, counting from 0. Empty for `puzzle` |
 | `tags` | Hidden, optional: misconceptions for particular wrong answers, e.g. `{"64": "Used n² instead"}` |
 | `explain` | Hidden until answered: the worked explanation |
 
 The table refuses broken questions: an `mcq` needs at least two options and an `answer` that is one of their positions, and a `num` question must not have options. A question whose `topic` doesn't match any topic on the site simply isn't shown. Deleting a question keeps the attempts students already made on it.
 
 Without Supabase connected there are no practice questions (the visualizers still work).
+
+#### Puzzles (interactive questions)
+
+A `puzzle` question is a board the student plays: clicking vertices in BFS order, building a Hamiltonian cycle with backtracking, placing queens, walking a maze, moving the Tower of Hanoi, clicking a point on a vector grid, and so on. The row stores only the board's **settings**; the website draws a fresh random board every time (students can press **New board**), checks each move, explains the wrong ones, and records the result like any other answer — so puzzles count towards mastery and appear on the teacher dashboard.
+
+**Load the starter puzzles (once):** after `schema.sql`, run `supabase/seed-puzzles.sql` the same way. It adds 29 puzzles across the three subjects (ids start with `pz-`). It contains no answers, so it is safe to commit; re-running it resets those rows and never deletes anything.
+
+Settings for `puzzle` (`type` is required; the other numbers are optional, shown as *range (default)*):
+
+| `type` | What the student does | Other settings |
+|---|---|---|
+| `bfs`, `dfs` | Click the vertices in visiting order | `nodes` 4–10 (7), `extra` edges 0–12 |
+| `topo` | Click a topological order of a directed graph | `nodes` 4–9 (6) |
+| `dijkstra` | Click vertices in the order Dijkstra finalises them | `nodes` 4–9 (6), `extra` 0–12 |
+| `kruskal` | Click edges in the order Kruskal adds them | `nodes` 4–9 (6), `extra` 1–12 |
+| `hamiltonian` | Build a Hamiltonian cycle, backing up at dead ends | `nodes` 4–10 (7), `extra` 0–12 |
+| `tree-order` | Click a BST's nodes in a traversal order | `nodes` 4–12 (7), `order`: `"preorder"`, `"inorder"`, `"postorder"` or `"level"` |
+| `bst-search` | Click the nodes a BST search compares with | `nodes` 4–12 (8) |
+| `selection-sort` | Click the bar each pass swaps into place | `size` 4–10 (7) |
+| `queens` | Place n queens that don't attack each other | `n` 4–8 (6) |
+| `maze` | Walk from the entrance to the exit | `size` 3–10 (6) |
+| `hanoi` | Move the tower in the fewest moves | `disks` 2–6 (3) |
+| `combination` | Click the point a·u + b·v | `range` 4–8 (6) |
+| `transform` | Click where the matrix A sends p | `range` 4–8 (6) |
+| `eigenvector` | Click an eigenvector of A | `range` 4–8 (6) |
+| `projection` | Click the projection of p onto a line | `range` 4–8 (6) |
+
+The board's own explanation is shown after each attempt, so leave `explain`, `answer`, `options` and `tags` empty. `hint` and `tag` work as for other questions. Note that puzzle moves are checked in the browser, so a determined student could fake a puzzle result; the theory questions remain graded by the database.
 
 ### How it works
 
@@ -163,6 +192,7 @@ Data recorded before accounts existed (students identified only by a typed name)
 │   └── assets/                # Images bundled by Vite (logo)
 ├── supabase/schema.sql        # Tables, accounts/roles, grading function, security rules — run in Supabase
 ├── supabase/seed-problems.sql # Git-ignored, one-time import of the original 172 questions
+├── supabase/seed-puzzles.sql  # One-time import of the 29 starter puzzles (no answers inside)
 ├── .env.example               # Template for VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
 ├── vercel.json                # SPA rewrite so deep links work on refresh
 └── vite.config.ts
@@ -221,13 +251,14 @@ Follows the syllabus unit by unit (27 topics, 54 practice problems). Most visual
 ## Modes
 
 - **Explore:** interactive visualizers, input controls, intermediate states and concept notes. While a student is signed in, time spent and steps taken per topic are recorded automatically.
-- **Student (manual practice):** sign in with a student account see your mastery per topic, practice auto-graded problems from the `problems` table (172 to start with: 60 for Algorithms, 58 for Data Structures, 54 for Linear Algebra), use hints, and open the matching visualizer. Teacher assignments appear here.
+- **Student (manual practice):** sign in with a student account see your mastery per topic, practice auto-graded problems from the `problems` table (172 to start with: 60 for Algorithms, 58 for Data Structures, 54 for Linear Algebra) plus 29 interactive puzzles that play the algorithm on a fresh board, use hints, and open the matching visualizer. Teacher assignments appear here.
 - **Teacher (automated, teacher accounts only):** no grading or data entry. The dashboard derives class accuracy, weakest topics, most common misconceptions, students needing attention, a student × topic heatmap, per-student drill-down (time, steps, misconceptions), and one-click auto-assignment of the weakest topics. Export CSV/JSON.
 
 ## How tracking works
 
 - The `problems` table holds every question with its answer; each wrong answer maps to a named misconception.
 - `src/domain/problems.ts`: `useProblems` loads the question columns for the signed-in user; `checkAnswer` sends an answer to `submit_attempt`, which grades it in the database. The website contains no answers.
+- `src/domain/puzzles/*.ts`: the interactive puzzles — each builds a seeded board from a row's `puzzle` settings and checks every move (unit-tested); `src/components/modes/PuzzleCard.tsx` draws and plays them, and `submitPuzzle` records the result with the database function `submit_puzzle`.
 - `src/domain/tracking.ts`: data model, localStorage persistence (`useDB`), analytics, and `useActivityTracker`.
 - Mastery = share of the last 6 attempts answered correctly (a correct answer after a hint counts half), shown only after 2+ attempts. Below 50% = struggling, below 75% = developing.
 - `src/domain/daa/**`, `src/domain/ds/*.ts` and `src/domain/la/*.ts`: pure, deterministic logic behind every visual (seeded, no randomness); the `*.test.ts` files verify it against textbook results.

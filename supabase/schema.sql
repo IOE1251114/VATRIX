@@ -15,6 +15,8 @@
 --     the question columns; answers and explanations stay hidden. Students send an answer to
 --     submit_attempt(), which grades it, records the attempt and returns the explanation.
 --     Students cannot read answers or write attempts themselves.
+--   • Puzzle rows (kind 'puzzle') hold board settings instead of an answer. The website builds a
+--     fresh board from them, checks the moves, and records the result with submit_puzzle().
 --   • Keep "Confirm email" ON (Authentication → Sign In / Providers → Email). Teacher rights are
 --     tied to an email address, and only a confirmed address proves the person owns it. With
 --     confirmation off, anyone could sign up with a listed teacher's email and see every student.
@@ -164,24 +166,28 @@ where s.id = p.id::text
 --   id          unique name, e.g. 'ram-3' (lower-case letters, digits, hyphens)
 --   topic       the topic it belongs to: the ?topic= part of the topic's URL, e.g. 'ram', 'ds-stack'
 --   sort_order  position within the topic (smaller first)
---   kind        'mcq' (pick an option) or 'num' (type a number)
+--   kind        'mcq' (pick an option), 'num' (type a number) or 'puzzle' (an interactive board)
 --   prompt      the question text
---   options     mcq only: the choices, e.g. {"First","Second","Third"}; leave empty for 'num'
+--   options     mcq only: the choices, e.g. {"First","Second","Third"}; leave empty otherwise
+--   puzzle      puzzle only: the board's settings, e.g. {"type": "bfs", "nodes": 7}. The website
+--               draws a fresh board each time and checks the moves (see README → Puzzles).
 --   hint        shown when the student asks for a hint
 --   tag         the misconception recorded for a wrong answer (shown to students and teachers)
---   answer      HIDDEN — 'num': the correct number; 'mcq': the position of the correct option, from 0
+--   answer      HIDDEN — 'num': the correct number; 'mcq': the position of the correct option, from 0;
+--               leave empty for 'puzzle'
 --   tags        HIDDEN — misconceptions for particular wrong answers, e.g. {"64": "Used n² instead"}
 --   explain     HIDDEN until answered — the worked explanation shown after checking
 create table if not exists public.problems (
   id          text primary key check (id ~ '^[a-z0-9-]{1,40}$'),
   topic       text not null check (topic ~ '^[a-z0-9-]{1,40}$'),
   sort_order  integer not null default 0,
-  kind        text not null check (kind in ('mcq', 'num')),
+  kind        text not null,
   prompt      text not null check (char_length(prompt) between 1 and 2000),
   options     text[],
+  puzzle      jsonb,
   hint        text not null default '',
   tag         text not null check (char_length(tag) between 1 and 200),
-  answer      numeric not null,
+  answer      numeric,
   tags        jsonb not null default '{}'::jsonb check (jsonb_typeof(tags) = 'object'),
   explain     text not null default '',
   created_at  timestamptz not null default now(),
@@ -196,6 +202,23 @@ create table if not exists public.problems (
   constraint num_has_no_options check (kind <> 'num' or options is null)
 );
 create index if not exists problems_topic_order on public.problems (topic, sort_order, id);
+
+-- Interactive puzzles (added later): bring an existing table up to date. Safe to run again.
+alter table public.problems add column if not exists puzzle jsonb;
+alter table public.problems alter column answer drop not null;
+alter table public.problems drop constraint if exists problems_kind_check;
+alter table public.problems add constraint problems_kind_check
+  check (kind in ('mcq', 'num', 'puzzle'));
+alter table public.problems drop constraint if exists question_has_answer;
+alter table public.problems add constraint question_has_answer
+  check (kind = 'puzzle' or answer is not null);
+alter table public.problems drop constraint if exists puzzle_has_settings;
+alter table public.problems add constraint puzzle_has_settings check (
+  kind <> 'puzzle' or (
+    options is null and jsonb_typeof(puzzle) = 'object'
+    and jsonb_typeof(puzzle -> 'type') = 'string'
+  )
+);
 
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
@@ -241,6 +264,9 @@ begin
   if not found then
     raise exception 'This question no longer exists. Reload the page.' using errcode = 'P0002';
   end if;
+  if k.kind = 'puzzle' then
+    raise exception 'Puzzles are recorded with submit_puzzle.' using errcode = '22023';
+  end if;
 
   begin
     v := given::numeric;
@@ -260,10 +286,48 @@ end $$;
 revoke all on function public.submit_attempt(text, text, boolean) from public, anon;
 grant execute on function public.submit_attempt(text, text, boolean) to authenticated;
 
+-- Record one finished puzzle for the signed-in student. A puzzle has no stored answer: the website
+-- builds a fresh board from the row's settings and checks the moves itself, then reports the
+-- result here. Returns {at}, the time the attempt was recorded.
+create or replace function public.submit_puzzle(
+  p_problem_id text, p_correct boolean, p_given text,
+  p_misconception text default null, p_hint boolean default false)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare
+  k   public.problems;
+  sid text := auth.uid()::text;
+  ok  boolean := coalesce(p_correct, false);
+  ts  timestamptz := now();
+begin
+  if auth.uid() is null then
+    raise exception 'Sign in to submit answers.' using errcode = '28000';
+  end if;
+  if not exists (select 1 from public.students where id = sid and not demo) then
+    raise exception 'Only student accounts can submit answers.' using errcode = '42501';
+  end if;
+  select * into k from public.problems where id = p_problem_id;
+  if not found then
+    raise exception 'This question no longer exists. Reload the page.' using errcode = 'P0002';
+  end if;
+  if k.kind <> 'puzzle' then
+    raise exception 'This question is not a puzzle.' using errcode = '22023';
+  end if;
+
+  insert into public.attempts (student_id, problem_id, topic, correct, given, misconception, hint, at)
+  values (sid, k.id, k.topic, ok, left(trim(coalesce(p_given, '')), 200),
+          case when ok then null else left(coalesce(nullif(trim(p_misconception), ''), k.tag), 200) end,
+          coalesce(p_hint, false), ts);
+
+  return jsonb_build_object('at', ts);
+end $$;
+
+revoke all on function public.submit_puzzle(text, boolean, text, text, boolean) from public, anon;
+grant execute on function public.submit_puzzle(text, boolean, text, text, boolean) to authenticated;
+
 -- Signed-in users may read only the question columns. The answer, the answer-specific
 -- misconceptions and the explanation are not granted, so no website request can read them.
 revoke all on public.problems from anon, authenticated;
-grant select (id, topic, sort_order, kind, prompt, options, hint, tag) on public.problems to authenticated;
+grant select (id, topic, sort_order, kind, prompt, options, puzzle, hint, tag) on public.problems to authenticated;
 
 -- The earlier answers-only table, replaced by public.problems.
 drop table if exists public.problem_key;

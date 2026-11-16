@@ -9,9 +9,11 @@ import {
   Target,
   UserRound,
 } from "lucide-react";
+import { PuzzleCard, type PuzzleResult } from "./PuzzleCard";
 import {
   checkAnswer,
   problemsIn,
+  submitPuzzle,
   type Problem,
   type ProblemsState,
 } from "../../domain/problems";
@@ -124,6 +126,19 @@ export function StudentPanel({
       at: r.at,
     });
     return r;
+  };
+
+  const finishPuzzle = async (p: Problem, r: PuzzleResult, hint: boolean) => {
+    const at = await submitPuzzle(p.id, r, hint);
+    onAttempt({
+      problemId: p.id,
+      topic: p.topic,
+      correct: r.correct,
+      given: r.given,
+      misconception: r.correct ? undefined : r.misconception || p.tag,
+      hint,
+      at,
+    });
   };
 
   return (
@@ -239,7 +254,8 @@ export function StudentPanel({
             </h2>
             <p>
               Answers are checked automatically and every wrong answer is
-              matched to a specific misconception.
+              matched to a specific misconception. Puzzles are hands-on: play
+              the algorithm on a fresh board each time.
             </p>
           </div>
           {assignment ? (
@@ -282,14 +298,23 @@ export function StudentPanel({
             </button>
           </div>
         ) : list.length ? (
-          list.map((p) => (
-            <ProblemCard
-              key={p.id}
-              p={p}
-              solved={solved(p.id)}
-              onSubmit={(g, h) => submit(p, g, h)}
-            />
-          ))
+          list.map((p) =>
+            p.kind === "puzzle" ? (
+              <PuzzleCard
+                key={p.id}
+                p={p}
+                solved={solved(p.id)}
+                onFinish={(r, h) => finishPuzzle(p, r, h)}
+              />
+            ) : (
+              <ProblemCard
+                key={p.id}
+                p={p}
+                solved={solved(p.id)}
+                onSubmit={(g, h) => submit(p, g, h)}
+              />
+            ),
+          )
         ) : (
           <div className="empty-state">
             <p>

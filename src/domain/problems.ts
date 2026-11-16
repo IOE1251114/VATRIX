@@ -4,19 +4,26 @@
  * misconception). Answers, answer-specific misconceptions and explanations stay in the database:
  * an answer is sent to the database function submit_attempt, which grades it, records the
  * attempt and returns the result with the explanation. Teachers add, edit and delete questions
- * in the Supabase dashboard (Table Editor → problems). */
+ * in the Supabase dashboard (Table Editor → problems).
+ *
+ * Puzzle rows (kind 'puzzle') have no stored answer: their `puzzle` column holds board settings,
+ * the website builds and checks a fresh board (src/domain/puzzles), and submitPuzzle records the
+ * result. */
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { fetchAllRows } from "./sync";
+import { PUZZLES, type Settings } from "./puzzles";
 
 /** A practice question as the website sees it: never the answer. */
 export type Problem = {
   id: string;
   topic: string;
-  kind: "mcq" | "num";
+  kind: "mcq" | "num" | "puzzle";
   prompt: string;
   /** mcq only: the choices, in order. */
   options?: string[];
+  /** puzzle only: the board settings, e.g. {type: "bfs", nodes: 7}. */
+  puzzle?: Settings;
   hint: string;
   /** Misconception recorded for a wrong answer when no specific one applies. */
   tag: string;
@@ -31,7 +38,8 @@ export type Graded = {
 };
 
 /** The only columns the website may read (the database refuses the others). */
-const COLUMNS = "id, topic, sort_order, kind, prompt, options, hint, tag";
+const COLUMNS =
+  "id, topic, sort_order, kind, prompt, options, puzzle, hint, tag";
 
 export type ProblemRow = {
   id: string;
@@ -40,12 +48,33 @@ export type ProblemRow = {
   kind: string;
   prompt: string;
   options: string[] | null;
+  puzzle?: unknown;
   hint: string | null;
   tag: string;
 };
 
-/** Turn a database row into a question, or null if it can't be shown (bad kind or options). */
+const isSettings = (v: unknown): v is Settings =>
+  !!v &&
+  typeof v === "object" &&
+  !Array.isArray(v) &&
+  typeof (v as Settings).type === "string" &&
+  (v as Settings).type in PUZZLES;
+
+/** Turn a database row into a question, or null if it can't be shown (bad kind, options or
+ * puzzle settings). */
 export function toProblem(r: ProblemRow): Problem | null {
+  if (r.kind === "puzzle")
+    return isSettings(r.puzzle)
+      ? {
+          id: r.id,
+          topic: r.topic,
+          kind: "puzzle",
+          prompt: r.prompt,
+          puzzle: r.puzzle,
+          hint: r.hint ?? "",
+          tag: r.tag,
+        }
+      : null;
   if (r.kind !== "mcq" && r.kind !== "num") return null;
   if (r.kind === "mcq" && !(r.options && r.options.length >= 2)) return null;
   return {
@@ -161,4 +190,30 @@ export async function checkAnswer(
     explain: r.explain,
     at: Date.parse(r.at),
   };
+}
+
+/**
+ * Record a finished puzzle for the signed-in student. The website checked the moves itself;
+ * the database stores the result and returns when it did. Throws a readable message on failure.
+ */
+export async function submitPuzzle(
+  problemId: string,
+  result: { correct: boolean; given: string; misconception?: string },
+  hint: boolean,
+): Promise<number> {
+  if (!supabase)
+    throw new Error("Practice questions need the database to be connected.");
+  const { data, error } = await supabase.rpc("submit_puzzle", {
+    p_problem_id: problemId,
+    p_correct: result.correct,
+    p_given: result.given.slice(0, 200),
+    p_misconception: result.misconception ?? null,
+    p_hint: hint,
+  });
+  if (error)
+    throw new Error(
+      error.message ||
+        "Couldn't save your result. Check your connection and try again.",
+    );
+  return Date.parse((data as { at: string }).at);
 }

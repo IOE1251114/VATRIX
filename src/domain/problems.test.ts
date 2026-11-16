@@ -36,6 +36,16 @@ describe("toProblem", () => {
     expect(p).not.toHaveProperty("answer");
     expect(p).not.toHaveProperty("explain");
   });
+  it("reads puzzle rows and their settings", () => {
+    expect(
+      toProblem(row({ kind: "puzzle", puzzle: { type: "bfs", nodes: 6 } })),
+    ).toMatchObject({ kind: "puzzle", puzzle: { type: "bfs", nodes: 6 } });
+    expect(toProblem(row({ kind: "puzzle", puzzle: null }))).toBeNull();
+    expect(
+      toProblem(row({ kind: "puzzle", puzzle: { type: "chess" } })),
+    ).toBeNull();
+    expect(toProblem(row({ kind: "puzzle", puzzle: ["bfs"] }))).toBeNull();
+  });
   it("skips rows that can't be shown", () => {
     expect(toProblem(row({ kind: "essay" }))).toBeNull();
     expect(toProblem(row({ kind: "mcq", options: ["only one"] }))).toBeNull();
